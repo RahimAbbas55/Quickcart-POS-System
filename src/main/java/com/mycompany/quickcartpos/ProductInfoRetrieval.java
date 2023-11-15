@@ -18,7 +18,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
      */
     public ProductInfoRetrieval() {
         initComponents();
-        initComponents();
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
     }
@@ -142,7 +141,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addContainerGap(297, Short.MAX_VALUE))
         );
 
-        SearchPanel.setBackground(new java.awt.Color(242, 232, 252));
+        SearchPanel.setBackground(new java.awt.Color(239, 225, 239));
 
         barcodeLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         barcodeLabel.setText("Code");
@@ -205,6 +204,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
 
         addUpdateButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
         addUpdateButton.setText("Add/Update");
+        addUpdateButton.setFocusCycleRoot(true);
         addUpdateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addUpdateButtonActionPerformed(evt);
@@ -313,7 +313,9 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-
+        Home h = new Home();
+        h.setVisible(true);
+        setVisible(false);
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
