@@ -6,6 +6,12 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -34,7 +40,7 @@ public class SignIn extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        signUpButton1 = new javax.swing.JButton();
+        signUpButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         tfUsername = new javax.swing.JTextField();
         jPassword = new javax.swing.JPasswordField();
@@ -53,13 +59,13 @@ public class SignIn extends javax.swing.JFrame {
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("Don't have an account?");
 
-        signUpButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        signUpButton1.setForeground(new java.awt.Color(174, 102, 183));
-        signUpButton1.setText("SIGN UP");
-        signUpButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(174, 102, 183), 1, true));
-        signUpButton1.addActionListener(new java.awt.event.ActionListener() {
+        signUpButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signUpButton.setForeground(new java.awt.Color(174, 102, 183));
+        signUpButton.setText("SIGN UP");
+        signUpButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(174, 102, 183), 1, true));
+        signUpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signUpButton1ActionPerformed(evt);
+                signUpButtonActionPerformed(evt);
             }
         });
 
@@ -77,7 +83,7 @@ public class SignIn extends javax.swing.JFrame {
                     .addComponent(jLabel3)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(11, 11, 11)
-                        .addComponent(signUpButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -88,7 +94,7 @@ public class SignIn extends javax.swing.JFrame {
                 .addGap(49, 49, 49)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
-                .addComponent(signUpButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(222, Short.MAX_VALUE))
         );
 
@@ -181,16 +187,28 @@ public class SignIn extends javax.swing.JFrame {
     }//GEN-LAST:event_jPasswordActionPerformed
 
     private void signInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButtonActionPerformed
+        try { Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
+        String usernameDB = "root";
+        String passwordDB = "root123";
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
+            } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error: Unable to connect to the database.");
+        }
+        
         Home h = new Home();
         h.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_signInButtonActionPerformed
 
-    private void signUpButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButton1ActionPerformed
+    private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
         SignUp su = new SignUp();
         su.setVisible(true);
         setVisible(false);
-    }//GEN-LAST:event_signUpButton1ActionPerformed
+    }//GEN-LAST:event_signUpButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -236,7 +254,7 @@ public class SignIn extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JButton signInButton;
-    private javax.swing.JButton signUpButton1;
+    private javax.swing.JButton signUpButton;
     private javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 }

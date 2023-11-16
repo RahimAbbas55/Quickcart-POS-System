@@ -51,7 +51,7 @@ public class SignUp extends javax.swing.JFrame {
         tfPhone = new javax.swing.JTextField();
         tfAddress = new javax.swing.JTextField();
         tfCNIC = new javax.swing.JTextField();
-        signInButton1 = new javax.swing.JButton();
+        signUpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,7 +68,6 @@ public class SignUp extends javax.swing.JFrame {
         signInButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         signInButton.setForeground(new java.awt.Color(174, 102, 183));
         signInButton.setText("SIGN IN");
-        signInButton.setActionCommand("SIGN IN");
         signInButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(174, 102, 183), 1, true));
         signInButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -159,14 +158,14 @@ public class SignUp extends javax.swing.JFrame {
             }
         });
 
-        signInButton1.setBackground(new java.awt.Color(174, 102, 183));
-        signInButton1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        signInButton1.setForeground(new java.awt.Color(255, 255, 255));
-        signInButton1.setText("SIGN UP");
-        signInButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(174, 102, 183), 1, true));
-        signInButton1.addActionListener(new java.awt.event.ActionListener() {
+        signUpButton.setBackground(new java.awt.Color(174, 102, 183));
+        signUpButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        signUpButton.setForeground(new java.awt.Color(255, 255, 255));
+        signUpButton.setText("SIGN UP");
+        signUpButton.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(174, 102, 183), 1, true));
+        signUpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                signInButton1ActionPerformed(evt);
+                signUpButtonActionPerformed(evt);
             }
         });
 
@@ -203,7 +202,7 @@ public class SignUp extends javax.swing.JFrame {
                                     .addComponent(tfCNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(181, 181, 181)
-                                .addComponent(signInButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addContainerGap(40, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -241,7 +240,7 @@ public class SignUp extends javax.swing.JFrame {
                 .addGap(0, 0, 0)
                 .addComponent(tfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26)
-                .addComponent(signInButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -252,11 +251,11 @@ public class SignUp extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfEmailActionPerformed
 
-    private void signInButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButton1ActionPerformed
+    private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
         SignIn si = new SignIn();
         si.setVisible(true);
         setVisible(false);
-    }//GEN-LAST:event_signInButton1ActionPerformed
+    }//GEN-LAST:event_signUpButtonActionPerformed
 
     private void tfCNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCNICActionPerformed
         // TODO add your handling code here:
@@ -319,7 +318,7 @@ public class SignUp extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JButton signInButton;
-    private javax.swing.JButton signInButton1;
+    private javax.swing.JButton signUpButton;
     private javax.swing.JTextField tfAddress;
     private javax.swing.JTextField tfCNIC;
     private javax.swing.JTextField tfEmail;
