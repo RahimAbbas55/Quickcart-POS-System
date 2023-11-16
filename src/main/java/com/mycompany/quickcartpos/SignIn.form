@@ -91,7 +91,7 @@
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                          <Component id="signUpButton1" min="-2" pref="125" max="-2" attributes="0"/>
+                          <Component id="signUpButton" min="-2" pref="125" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -106,7 +106,7 @@
                   <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="signUpButton1" min="-2" pref="28" max="-2" attributes="0"/>
+                  <Component id="signUpButton" min="-2" pref="28" max="-2" attributes="0"/>
                   <EmptySpace pref="222" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -135,7 +135,7 @@
             <Property name="text" type="java.lang.String" value="Don&apos;t have an account?"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="signUpButton1">
+        <Component class="javax.swing.JButton" name="signUpButton">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="12" style="1"/>
@@ -153,7 +153,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="signUpButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="signUpButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
