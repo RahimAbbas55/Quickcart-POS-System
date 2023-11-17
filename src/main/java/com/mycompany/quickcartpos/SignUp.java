@@ -243,11 +243,10 @@ public class SignUp extends javax.swing.JFrame {
             String password = new String(jPassword.getPassword());
             String confirmPassword = new String(jConfirmPassword.getPassword());
             String email = tfEmail.getText();
-            String phone = tfPhone.getText();
+            String number = tfPhone.getText();
             String cnic = tfCNIC.getText();
 
             if (!password.equals(confirmPassword)) {
-                JOptionPane.showMessageDialog(this, "Password and Confirm Password do not match", "Password Mismatch", JOptionPane.ERROR_MESSAGE);
                 return;
             }
 
@@ -257,12 +256,12 @@ public class SignUp extends javax.swing.JFrame {
 
                 try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
                   
-                    String sql = "INSERT INTO users (username, password, email, phone, cnic) VALUES (?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO users (username, password, email, number, cnic) VALUES (?, ?, ?, ?, ?)";
                     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         pstmt.setString(1, username);
                         pstmt.setString(2, password);
                         pstmt.setString(3, email);
-                        pstmt.setString(4, phone);
+                        pstmt.setString(4, number);
                         pstmt.setString(5, cnic);
 
                         pstmt.executeUpdate();
