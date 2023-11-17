@@ -6,12 +6,14 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  *
@@ -19,9 +21,9 @@ import javax.swing.JOptionPane;
  */
 public class SignIn extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Login
-     */
+    String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
+    String usernameDB = "root";
+    String passwordDB = "root123";
     public SignIn() {
         initComponents();
         Container con = getContentPane();
@@ -191,20 +193,39 @@ public class SignIn extends javax.swing.JFrame {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
-        String usernameDB = "root";
-        String passwordDB = "root123";
+  
+        String enteredUsername = tfUsername.getText();
+        String enteredPassword = new String(jPassword.getPassword());
         try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
-            } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error: Unable to connect to the database.");
+            String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, enteredUsername);
+                preparedStatement.setString(2, enteredPassword);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        
+                        Home h = new Home();
+                        h.setVisible(true);
+                        setVisible(false);
+                    } else {
+                        
+                        JOptionPane.showMessageDialog(null, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: Unable to connect to the database.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
         
         Home h = new Home();
         h.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_signInButtonActionPerformed
-
+   
     private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
+
         SignUp su = new SignUp();
         su.setVisible(true);
         setVisible(false);
@@ -214,31 +235,7 @@ public class SignIn extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(SignIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(SignIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(SignIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(SignIn.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+       
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new SignIn().setVisible(true);
