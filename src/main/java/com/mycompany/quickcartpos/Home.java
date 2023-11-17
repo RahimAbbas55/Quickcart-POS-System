@@ -6,13 +6,19 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 /**
  *
  * @author Hp
  */
 public class Home extends javax.swing.JFrame {
-
+    public static String loggedInUsername;
     /**
      * Creates new form Home
      */
@@ -20,8 +26,11 @@ public class Home extends javax.swing.JFrame {
         initComponents();
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
+        fetchAndDisplayAdminInfo(loggedInUsername);
     }
-
+    public static void setLoggedInUsername(String username) {
+        loggedInUsername = username;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -41,6 +50,7 @@ public class Home extends javax.swing.JFrame {
         salesHistoryButton = new javax.swing.JLabel();
         OrdersButton = new javax.swing.JLabel();
         BillsButton = new javax.swing.JLabel();
+        LogoutButton = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         name = new javax.swing.JLabel();
@@ -63,7 +73,6 @@ public class Home extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(980, 600));
 
         AppNamePanel.setBackground(new java.awt.Color(174, 102, 183));
 
@@ -121,6 +130,10 @@ public class Home extends javax.swing.JFrame {
         BillsButton.setText("Bills");
         BillsButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
 
+        LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LogoutButton.setText("Logout");
+        LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
         MenuPanelLayout.setHorizontalGroup(
@@ -130,6 +143,7 @@ public class Home extends javax.swing.JFrame {
             .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(BillsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         MenuPanelLayout.setVerticalGroup(
             MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -144,7 +158,9 @@ public class Home extends javax.swing.JFrame {
                 .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BillsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -260,14 +276,11 @@ public class Home extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(170, 170, 170)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(1, 1, 1))
+                .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(170, 170, 170)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -278,12 +291,12 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(59, 59, 59)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 127, Short.MAX_VALUE))))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         
     }//GEN-LAST:event_HomeButtonMouseClicked
@@ -293,11 +306,47 @@ public class Home extends javax.swing.JFrame {
         pir.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_InventoryButtonMouseClicked
+    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {                                             
+        SignIn signInPage = new SignIn();
+        signInPage.setVisible(true);
+        this.setVisible(false);
+    } 
+    private void fetchAndDisplayAdminInfo(String loggedInUsername) {
+        String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
+        String usernameDB = "root";
+        String passwordDB = "root123";
 
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
+            String query = "SELECT * FROM users WHERE username = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, loggedInUsername);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        String adminName = resultSet.getString("name");
+                        String adminCNIC = resultSet.getString("cnic");
+                        String adminEmail = resultSet.getString("email");
+                        String adminPhoneNo = resultSet.getString("number");
+                        String adminAddress = resultSet.getString("address");
+
+                        
+                        name.setText(adminName);
+                        cnic.setText(adminCNIC);
+                        email.setText(adminEmail);
+                        phoneNo.setText(adminPhoneNo);
+                        address.setText(adminAddress);
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();   
+        }
+    }
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
+        
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -334,6 +383,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel BillsButton;
     private javax.swing.JLabel HomeButton;
     private javax.swing.JLabel InventoryButton;
+    private javax.swing.JLabel LogoutButton;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel QuickCartLabel;
