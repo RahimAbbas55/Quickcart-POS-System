@@ -37,8 +37,10 @@ public class SignUp extends javax.swing.JFrame {
         jConfirmPassword = new javax.swing.JPasswordField();
         tfEmail = new javax.swing.JTextField();
         tfPhone = new javax.swing.JTextField();
-        tfCNIC = new javax.swing.JTextField();
+        tfAddress = new javax.swing.JTextField();
         signUpButton = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        tfCNIC = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -134,10 +136,10 @@ public class SignUp extends javax.swing.JFrame {
 
         tfPhone.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
-        tfCNIC.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        tfCNIC.addActionListener(new java.awt.event.ActionListener() {
+        tfAddress.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tfAddress.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfCNICActionPerformed(evt);
+                tfAddressActionPerformed(evt);
             }
         });
 
@@ -149,6 +151,15 @@ public class SignUp extends javax.swing.JFrame {
         signUpButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 signUpButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setText(" Address");
+
+        tfCNIC.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tfCNIC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tfCNICActionPerformed(evt);
             }
         });
 
@@ -174,6 +185,8 @@ public class SignUp extends javax.swing.JFrame {
                                 .addComponent(tfEmail)
                                 .addComponent(tfPhone))
                             .addComponent(jLabel7)
+                            .addComponent(tfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10)
                             .addComponent(tfCNIC, javax.swing.GroupLayout.PREFERRED_SIZE, 413, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(40, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -184,7 +197,7 @@ public class SignUp extends javax.swing.JFrame {
                                 .addGap(148, 148, 148))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(177, 177, 177))))))
+                                .addGap(178, 178, 178))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,9 +229,13 @@ public class SignUp extends javax.swing.JFrame {
                 .addComponent(jLabel7)
                 .addGap(0, 0, 0)
                 .addComponent(tfCNIC, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(52, 52, 52)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel10)
+                .addGap(0, 0, 0)
+                .addComponent(tfAddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(signUpButton, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(52, 52, 52))
         );
 
         pack();
@@ -229,23 +246,13 @@ public class SignUp extends javax.swing.JFrame {
     }//GEN-LAST:event_tfEmailActionPerformed
 
     private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
-        SignIn si = new SignIn();
-        si.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_signUpButtonActionPerformed
-
-    private void tfCNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCNICActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfCNICActionPerformed
-
-    private void signInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButtonActionPerformed
         String username = tfUsername.getText();
-            String password = new String(jPassword.getPassword());
-            String confirmPassword = new String(jConfirmPassword.getPassword());
-            String email = tfEmail.getText();
-            String number = tfPhone.getText();
-            String cnic = tfCNIC.getText();
-
+        String password = new String(jPassword.getPassword());
+        String confirmPassword = new String(jConfirmPassword.getPassword());
+        String email = tfEmail.getText();
+        String number = tfPhone.getText();
+        String cnic = tfCNIC.getText();
+        String address = tfAddress.getText();
             if (!password.equals(confirmPassword)) {
                 return;
             }
@@ -256,13 +263,14 @@ public class SignUp extends javax.swing.JFrame {
 
                 try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
                   
-                    String sql = "INSERT INTO users (username, password, email, number, cnic) VALUES (?, ?, ?, ?, ?)";
+                    String sql = "INSERT INTO users (username, password, email, number, cnic, address) VALUES (?, ?, ?, ?, ?, ?)";
                     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         pstmt.setString(1, username);
                         pstmt.setString(2, password);
                         pstmt.setString(3, email);
                         pstmt.setString(4, number);
                         pstmt.setString(5, cnic);
+                        pstmt.setString(6, address);
 
                         pstmt.executeUpdate();
                     }
@@ -274,7 +282,21 @@ public class SignUp extends javax.swing.JFrame {
         SignIn si = new SignIn();
         si.setVisible(true);
         setVisible(false);
+    }//GEN-LAST:event_signUpButtonActionPerformed
+
+    private void tfAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAddressActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfAddressActionPerformed
+
+    private void signInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButtonActionPerformed
+        SignIn si = new SignIn();
+        si.setVisible(true);
+        setVisible(false);
     }//GEN-LAST:event_signInButtonActionPerformed
+
+    private void tfCNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCNICActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tfCNICActionPerformed
 
     /**
      * @param args the command line arguments
@@ -314,6 +336,7 @@ public class SignUp extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField jConfirmPassword;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
@@ -327,6 +350,7 @@ public class SignUp extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JButton signInButton;
     private javax.swing.JButton signUpButton;
+    private javax.swing.JTextField tfAddress;
     private javax.swing.JTextField tfCNIC;
     private javax.swing.JTextField tfEmail;
     private javax.swing.JTextField tfPhone;

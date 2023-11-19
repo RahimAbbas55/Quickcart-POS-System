@@ -206,7 +206,7 @@ public class SignIn extends javax.swing.JFrame {
                     if (resultSet.next()) {
                         
                         Home h = new Home();
-                        h.setLoggedInUsername(enteredUsername);
+                        Home.setLoggedInUsername(enteredUsername);
                         h.setVisible(true);
                         setVisible(false);
                     } else {
@@ -221,7 +221,7 @@ public class SignIn extends javax.swing.JFrame {
         }
         
        Home h = new Home();
-       h.setLoggedInUsername(enteredUsername);
+        h.setLoggedInUsername(enteredUsername);
         h.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_signInButtonActionPerformed
