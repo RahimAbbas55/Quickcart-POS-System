@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "zeta-tracer-405617",
+  "private_key_id": "26cc2165ac8034e95c6c0d4a6a299628f748d712",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtIyw90Y3jUlkl\nky/0athx4wHnDFPudXzNx+ZxwsZjnbZdj7ey81MRzejJ2Xe4fYHL9k6Uf/fGufDC\nW/F39BKC17n+OTHNvz4+WMgMCm7cC16fNPekHUnQHUjvipjkqkGXOMx4fcUcGVFH\nPpAYr9xUbiiwVFhsy3r64KsUOB3lNdRp+j72JWhSHzPw2/hc3CXDM00P4rHtZ73h\niywOr2i9WGq93nZ+5OyZfYz4pAJmxJ+WE73v0j0dhnxTOscEjfFgTPdX/mcLs6lo\nC++E+44XQXauQGL7ZVSysCfZkxy9u+moiVX3d4oG/LowZo0CraTYqLRPL690Zd1m\nhFjlQUz1AgMBAAECggEAGUlHR1oJGnem7G10NgK6zNtGJlvvECcZjKZS2i+DsP3S\nKhT408pkyfdkNcKskQXHhKXa8SZFZkE2z/QErqu3XmOqVt48j1uMeCeYQ+XsLff9\nIExolI/wfVQhmFaKIO9at/7EIh7gQEvUSo7xFaHtkGksSSBwb6dCNUzFv6S4fQai\n+VbbUrMRcE9rjNClI0Ue6EiT4z6oHwmXZpPgDBBiUmFuz6QLoL3uHj1aLsMQOSTP\nRmFyKwG5zyeWOLhM4u11JSlDrCoomQMUnBb8/JCQptt9SsPbKs9CIddUzXGdnx1J\nB4pqZG6XQ6L3ndJeGOKJqSCU/ZzN1bjrg0FtiukYawKBgQDy0DeZPYVnXuAQApMJ\nmWRddDvbt9+f6kQidKcztQFENh5do6p2GDZz6GK0R8CXaAduGrkXxQzKHp5sUJsZ\nK3sDu0j8vme6pzRyRa/IULdjYid1KCJygK3led5iZUA6GCVEDx+GFVrWVQrdNl+m\n/ded3K5iZ312UwdyNFYxi5/xtwKBgQC2ikP5P2bAA5QyU8fwCUgW54NfpISXfyep\nKxZ6CytDi+1g4egP8j2v4Layp65eFaVrD6Denazccf9jb7hqlr9zrek5UkZSOhzv\nBbLtwI+3+3QOVBWfhyfL10cJHVWZK1JA2frUveKQaTPhDDb2nxcjrawVpBZtwKXx\n3wPVXUcGswKBgE5mrt0bAT0sZDqnKiT6U27dfgpm55zx/ogFlItckYkd1FY15290\nR/jK+zvswyHgJC4IEOW86XFFy697o2jQIktFKL77F/Er1gJjv+t1LJG5erYYfG7u\nX7ftzsGEoeVgMIA2Rd58fLUiBn0A9oesBPfi7qe1dMxE6O2WOpKK290nAoGAcb+x\nYfVvSwIv7DinI940zQkRpZz4fwtepJ1UEVM6b4oXr0K3AJDcfefTEXtKPhjRDukb\nPv4UhP6IvecVjV5JCYX7CpxJc94Av7XWbS+Mn4KTLIabPuDTHMQW4QglmiATzpPH\nKaD2OTVFfdzFt2Ml4TbNQGMTEut0vUdStTe+Fd8CgYEAt2IcrCJ6klIwBmCw+KkY\nyt1ptqNNwHCe9vu5DPmYmb+rF53HiOQwPo8NxKdaRAaZBWENU19Dvq/pBuwNnQGy\nMPo/zNqJcT1gfb7TdLp6n+3+3l2AGl8WbwJpnXpkZ2u+swthlRFvmqzY6gcrXHiY\n+8+2Db64gp+JDorU+KPGd+I=\n-----END PRIVATE KEY-----\n",
+  "client_email": "quickcart@zeta-tracer-405617.iam.gserviceaccount.com",
+  "client_id": "109849928444214600762",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/quickcart%40zeta-tracer-405617.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
