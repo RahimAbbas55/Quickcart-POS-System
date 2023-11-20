@@ -131,6 +131,11 @@ public class Home extends javax.swing.JFrame {
         CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         CartButton.setText("Cart");
         CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
 
         LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LogoutButton.setText("Logout");
@@ -326,6 +331,13 @@ public class Home extends javax.swing.JFrame {
         signInPage.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_LogoutButtonMouseClicked
+
+    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+        // TODO add your handling code here:
+        Cart cartPage = new Cart();
+        cartPage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_CartButtonMouseClicked
     
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";

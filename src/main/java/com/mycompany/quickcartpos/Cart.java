@@ -15,18 +15,23 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.HeadlessException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.AbstractCellEditor;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JTable;
+import javax.swing.Timer;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -38,6 +43,99 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Cart extends javax.swing.JFrame {
 
+    int endOfTable = 0;
+
+    public class QuantityRenderer extends DefaultTableCellRenderer {
+
+        private JLabel quantityLabel;
+        private JButton plusButton;
+        private JButton minusButton;
+
+        public QuantityRenderer() {
+            quantityLabel = new JLabel("1");
+            plusButton = new JButton("+");
+            minusButton = new JButton("-");
+            setLayout(new BorderLayout());
+            add(plusButton, BorderLayout.WEST);
+            add(quantityLabel, BorderLayout.CENTER);
+            add(minusButton, BorderLayout.EAST);
+
+            plusButton.addActionListener(e -> handlePlusButton());
+            minusButton.addActionListener(e -> handleMinusButton());
+        }
+
+        public void setQuantity(int quantity) {
+            quantityLabel.setText(String.valueOf(quantity));
+        }
+
+        private void handlePlusButton() {
+            int selectedRow = cartTable.getSelectedRow();
+            //Object q = cartTable.getValueAt(selectedRow, 1);
+            int quantity = getQuantity();
+            System.out.println("Row" + selectedRow + "Quantity " + quantity);
+            //cartTable.setValueAt(quantity + 1, selectedRow, 1);
+            setQuantity(quantity + 1);
+        }
+
+        private void handleMinusButton() {
+            int selectedRow = cartTable.getSelectedRow();
+            int quantity = getQuantity();
+            System.out.println("Row" + selectedRow + "Quantity " + quantity);
+            if (quantity > 0) {
+                setQuantity(quantity - 1);
+            }
+        }
+
+        public int getQuantity() {
+            return Integer.parseInt(quantityLabel.getText());
+        }
+
+        public JButton getPlusButton() {
+            return plusButton;
+        }
+
+        public JButton getMinusButton() {
+            return minusButton;
+        }
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            //setQuantity(Integer.parseInt(value.toString()));
+            setText(quantityLabel.getText());
+            return this;
+        }
+    }
+
+    public class QuantityButtonEditor extends AbstractCellEditor implements TableCellEditor {
+
+        private QuantityRenderer renderer;
+
+        public QuantityButtonEditor() {
+            renderer = new QuantityRenderer();
+            renderer.getPlusButton().addActionListener(e -> {
+                //renderer.handlePlusButton();
+                //fireEditingStopped();
+            });
+
+            renderer.getMinusButton().addActionListener(e -> {
+                //renderer.handleMinusButton();
+                //fireEditingStopped();
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            // Return the editor component, not the renderer component
+//            renderer.setQuantity(Integer.parseInt(value.toString()));
+            return renderer;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return renderer.getQuantity();
+        }
+    }
+
     /**
      * Creates new form Cart
      */
@@ -45,23 +143,19 @@ public class Cart extends javax.swing.JFrame {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
+
         checkDatabaseForBarcode();
+
     }
 
-    private String fetchSheetData() {
-        
-        System.out.println("Absolute Path: " + new File("zeta-tracer-405617-26cc2165ac80.json").getAbsolutePath());
-        try {
+    public String fetchSheetData() {
 
-            // Load credentials from JSON key file
+        try {
             InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
 
             if (jsonStream != null) {
                 GoogleCredentials credentials = ServiceAccountCredentials.fromStream(jsonStream)
-        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
-
-
-                // Build the Sheets API service
+                        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
                 HttpCredentialsAdapter httpCredentialsAdapter = new HttpCredentialsAdapter(credentials);
                 Sheets sheetsService = new Sheets.Builder(
                         com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
@@ -71,33 +165,25 @@ public class Cart extends javax.swing.JFrame {
                         .setApplicationName("QuickCart")
                         .build();
                 String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
-                String sheetName = "barcodes";
-                String lastRowRange ="B:B";
+                String lastRowRange = "B:B";
                 ValueRange lastRowResponse = sheetsService.spreadsheets().values()
                         .get(spreadsheetId, lastRowRange)
                         .execute();
 
                 List<List<Object>> lastRowValues = lastRowResponse.getValues();
-
-                // Check if there is at least one row in column B
                 if (lastRowValues != null && !lastRowValues.isEmpty()) {
-                    // Get the last row number
+
                     int lastRow = lastRowValues.size();
+                        String range = "B" + lastRow;
+                        ValueRange response = sheetsService.spreadsheets().values()
+                                .get(spreadsheetId, range)
+                                .execute();
 
-                    // Specify the range for the last row in column B
-                    String range = "B"+lastRow;
+                        List<List<Object>> values = response.getValues();
+                        if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
+                            return values.get(0).get(0).toString();
+                        }
 
-                    // Fetch data from the specified range
-                    ValueRange response = sheetsService.spreadsheets().values()
-                            .get(spreadsheetId, range)
-                            .execute();
-
-                    List<List<Object>> values = response.getValues();
-
-                    // Assuming that the data in the last row is a single string
-                    if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
-                        return values.get(0).get(0).toString();
-                    }
                 }
                 return "1";
             } else {
@@ -109,11 +195,15 @@ public class Cart extends javax.swing.JFrame {
             return "3";
         }
     }
+    public void updateTable() {
+        checkDatabaseForBarcode();
+        // Add a new row to the table model
+    }
 
-    private void checkDatabaseForBarcode() {
+    public void checkDatabaseForBarcode() {
         String scannedBarcode = fetchSheetData();
         System.out.print(scannedBarcode);
-        
+
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123");
             String query = "SELECT * FROM Inventory WHERE barcode = ?";
@@ -122,22 +212,30 @@ public class Cart extends javax.swing.JFrame {
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                // Step 4: If there is a match, write details to a text file
                 String productName = resultSet.getString("name");
                 int quantity = resultSet.getInt("quantity");
                 double price = resultSet.getDouble("price");
 
-                try (FileWriter writer = new FileWriter("C:\\Users\\hp\\Desktop\\output.txt", true)) {
+                try (FileWriter writer = new FileWriter("C:\\Users\\hp\\Desktop\\output.txt")) {
                     writer.write(productName + "," + quantity + "," + price + "\n");
                 } catch (Exception ex) {
                 }
 
-                // Step 5: Update the Swing UI (cartTable) with the data from the text file
-                displayCartData();
+                DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+                // Clear existing rows
+                model.setRowCount(0);
 
+                // Add a row with buttons to the respective row
+                Object[] rowData = new Object[100];
+                rowData[0] = productName;
+                rowData[1] = "1";
+                cartTable.getColumnModel().getColumn(1).setCellRenderer(new QuantityRenderer());
+                cartTable.getColumnModel().getColumn(1).setCellEditor(new QuantityButtonEditor());
+
+                rowData[2] = price;
+                model.addRow(rowData);
             } else {
-                
-                JOptionPane.showMessageDialog(null, scannedBarcode+"Product not found in the inventory.");
+                JOptionPane.showMessageDialog(null, scannedBarcode + "Product not found in the inventory.");
             }
 
             resultSet.close();
@@ -145,25 +243,7 @@ public class Cart extends javax.swing.JFrame {
             connection.close();
         } catch (HeadlessException | SQLException e) {
         }
-    }
 
-    private void displayCartData() {
-        // Read data from the "output.txt" file and display it in the JTable
-        try (BufferedReader reader = new BufferedReader(new FileReader("output.txt"))) {
-            DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
-            model.setRowCount(0); // Clear existing rows
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Split the line by comma to get individual values
-                String[] values = line.split(",");
-                if (values.length == 3) {
-                    // Add a new row to the table
-                    model.addRow(new Object[]{values[0], values[1], values[2]});
-                }
-            }
-        } catch (IOException | NumberFormatException e) {
-        }
     }
 
     /**
@@ -187,6 +267,7 @@ public class Cart extends javax.swing.JFrame {
         cartTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Cart");
 
         AppNamePanel.setBackground(new java.awt.Color(174, 102, 183));
 
@@ -272,22 +353,18 @@ public class Cart extends javax.swing.JFrame {
 
         cartTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Name", "Quantity", "Price", ""
+                "Name", "Quantity", "Price"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                true, false, false, false
+                false, false, false
             };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
         });
         jScrollPane1.setViewportView(cartTable);
 
@@ -358,7 +435,13 @@ public class Cart extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
+            
             new Cart().setVisible(true);
+            Timer timer; // 5000 milliseconds (5 seconds)
+            timer = new Timer(5000, e -> {
+                new Cart().updateTable();
+            });
+            timer.start();
         });
     }
 
