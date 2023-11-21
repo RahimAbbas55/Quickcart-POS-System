@@ -6,6 +6,7 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -49,7 +50,7 @@ public class Home extends javax.swing.JFrame {
         InventoryButton = new javax.swing.JLabel();
         salesHistoryButton = new javax.swing.JLabel();
         OrdersButton = new javax.swing.JLabel();
-        BillsButton = new javax.swing.JLabel();
+        CartButton = new javax.swing.JLabel();
         LogoutButton = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -63,7 +64,8 @@ public class Home extends javax.swing.JFrame {
         cnic = new javax.swing.JLabel();
         email = new javax.swing.JLabel();
         phoneNo = new javax.swing.JLabel();
-        address = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        address = new javax.swing.JTextArea();
 
         jMenu1.setText("jMenu1");
 
@@ -126,13 +128,23 @@ public class Home extends javax.swing.JFrame {
         OrdersButton.setText("Orders");
         OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
 
-        BillsButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        BillsButton.setText("Bills");
-        BillsButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CartButton.setText("Cart");
+        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
 
         LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         LogoutButton.setText("Logout");
         LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        LogoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LogoutButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
@@ -141,7 +153,7 @@ public class Home extends javax.swing.JFrame {
             .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
             .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(BillsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -157,10 +169,10 @@ public class Home extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(BillsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(266, Short.MAX_VALUE))
         );
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -169,6 +181,7 @@ public class Home extends javax.swing.JFrame {
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel6.setText("Address: ");
 
+        name.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         name.setText("name");
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -206,13 +219,19 @@ public class Home extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
+        cnic.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         cnic.setText("cnic");
 
+        email.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         email.setText("email");
 
+        phoneNo.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         phoneNo.setText("phoneNo");
 
-        address.setText("address");
+        address.setColumns(20);
+        address.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
+        address.setRows(5);
+        jScrollPane1.setViewportView(address);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -240,8 +259,8 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(address)))
-                .addContainerGap(274, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(41, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -266,10 +285,10 @@ public class Home extends javax.swing.JFrame {
                     .addComponent(jLabel5)
                     .addComponent(phoneNo))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
-                    .addComponent(address))
-                .addContainerGap(53, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -291,7 +310,7 @@ public class Home extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(59, 59, 59)
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 127, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         pack();
@@ -306,31 +325,40 @@ public class Home extends javax.swing.JFrame {
         pir.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_InventoryButtonMouseClicked
-    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {                                             
+
+    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogoutButtonMouseClicked
         SignIn signInPage = new SignIn();
         signInPage.setVisible(true);
         this.setVisible(false);
-    } 
+    }//GEN-LAST:event_LogoutButtonMouseClicked
+
+    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+        // TODO add your handling code here:
+        Cart cartPage = new Cart();
+        cartPage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_CartButtonMouseClicked
+    
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
         String usernameDB = "root";
         String passwordDB = "root123";
 
         try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
-            String query = "SELECT * FROM users WHERE username = ?";
+            String query = "SELECT * FROM users WHERE Username = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, loggedInUsername);
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        String adminName = resultSet.getString("name");
+                        String adminName = resultSet.getString("Username");
                         String adminCNIC = resultSet.getString("cnic");
                         String adminEmail = resultSet.getString("email");
                         String adminPhoneNo = resultSet.getString("number");
                         String adminAddress = resultSet.getString("address");
 
-                        
                         name.setText(adminName);
+                        name.getFont().deriveFont(Font.PLAIN);
                         cnic.setText(adminCNIC);
                         email.setText(adminEmail);
                         phoneNo.setText(adminPhoneNo);
@@ -380,14 +408,14 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel AppNamePanel;
-    private javax.swing.JLabel BillsButton;
+    private javax.swing.JLabel CartButton;
     private javax.swing.JLabel HomeButton;
     private javax.swing.JLabel InventoryButton;
     private javax.swing.JLabel LogoutButton;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel QuickCartLabel;
-    private javax.swing.JLabel address;
+    private javax.swing.JTextArea address;
     private javax.swing.JLabel cnic;
     private javax.swing.JLabel email;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
@@ -400,6 +428,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel name;
     private javax.swing.JLabel phoneNo;
     private javax.swing.JLabel salesHistoryButton;

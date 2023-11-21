@@ -38,7 +38,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         InventoryButton = new javax.swing.JLabel();
         salesHistoryButton = new javax.swing.JLabel();
         OrdersButton = new javax.swing.JLabel();
-        BillsButton = new javax.swing.JLabel();
+        CartButton = new javax.swing.JLabel();
         SearchPanel = new javax.swing.JPanel();
         barcodeLabel = new javax.swing.JLabel();
         barcodeField = new javax.swing.JTextField();
@@ -111,9 +111,9 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         OrdersButton.setText("Orders");
         OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
 
-        BillsButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        BillsButton.setText("Bills");
-        BillsButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CartButton.setText("Cart");
+        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
 
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
@@ -122,7 +122,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
             .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(BillsButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         MenuPanelLayout.setVerticalGroup(
@@ -137,7 +137,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(BillsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(297, Short.MAX_VALUE))
         );
 
@@ -203,7 +203,8 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         );
 
         addUpdateButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
-        addUpdateButton.setText("Add/Update");
+        addUpdateButton.setText("Update");
+        addUpdateButton.setActionCommand("Update");
         addUpdateButton.setFocusCycleRoot(true);
         addUpdateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -220,7 +221,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         });
 
         newButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
-        newButton.setText("New");
+        newButton.setText("Add");
         newButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 newButtonActionPerformed(evt);
@@ -275,12 +276,12 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(addUpdateButton)
+                        .addComponent(newButton)
                         .addGap(18, 18, 18)
                         .addComponent(deleteButton)
                         .addGap(18, 18, 18)
-                        .addComponent(newButton)
-                        .addGap(8, 8, 8)))
+                        .addComponent(addUpdateButton)
+                        .addGap(5, 5, 5)))
                 .addGap(20, 20, 20))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -383,7 +384,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel AppNamePanel;
-    private javax.swing.JLabel BillsButton;
+    private javax.swing.JLabel CartButton;
     private javax.swing.JLabel HomeButton;
     private javax.swing.JLabel InventoryButton;
     private javax.swing.JPanel MenuPanel;

@@ -40,12 +40,12 @@
                   <Component id="jScrollPane1" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="addUpdateButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="newButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="deleteButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="newButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                      <Component id="addUpdateButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
@@ -139,7 +139,7 @@
               <Component id="HomeButton" alignment="1" max="32767" attributes="0"/>
               <Component id="InventoryButton" alignment="1" pref="156" max="32767" attributes="0"/>
               <Component id="salesHistoryButton" alignment="0" max="32767" attributes="0"/>
-              <Component id="BillsButton" alignment="0" max="32767" attributes="0"/>
+              <Component id="CartButton" alignment="0" max="32767" attributes="0"/>
               <Component id="OrdersButton" alignment="1" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
@@ -155,7 +155,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="OrdersButton" min="-2" pref="25" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="BillsButton" min="-2" pref="25" max="-2" attributes="0"/>
+                  <Component id="CartButton" min="-2" pref="25" max="-2" attributes="0"/>
                   <EmptySpace pref="297" max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -223,10 +223,10 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="BillsButton">
+        <Component class="javax.swing.JLabel" name="CartButton">
           <Properties>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="Bills"/>
+            <Property name="text" type="java.lang.String" value="Cart"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
                 <LineBorder>
@@ -343,7 +343,8 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI Historic" size="14" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Add/Update"/>
+        <Property name="text" type="java.lang.String" value="Update"/>
+        <Property name="actionCommand" type="java.lang.String" value="Update"/>
         <Property name="focusCycleRoot" type="boolean" value="true"/>
       </Properties>
       <Events>
@@ -366,7 +367,7 @@
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Segoe UI Historic" size="14" style="0"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="New"/>
+        <Property name="text" type="java.lang.String" value="Add"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="newButtonActionPerformed"/>
