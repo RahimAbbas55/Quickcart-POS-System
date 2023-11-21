@@ -3,19 +3,41 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.quickcartpos;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import javax.swing.*;
+import java.awt.*;
+
 
 /**
  *
  * @author HP
  */
 public class Inventory extends javax.swing.JFrame {
-
+private JTable inventoryTable;
+ private DefaultTableModel tableModel;
     /**
      * Creates new form Inventory
      */
     public Inventory() {
         initComponents();
+          initTable();
     }
+    private void initTable() {
+        // Define column names
+        String[] columnNames = {"ID", "Name", "Barcode", "Quantity", "Price"};
+        tableModel = new DefaultTableModel(null, columnNames);
+        inventoryTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(inventoryTable);
+        add(scrollPane);
+    }
+    
+    private void addRowToTable(String id, String name, String barcode, String quantity, String price) {
+        tableModel.addRow(new Object[]{id, name, barcode, quantity, price});
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -49,7 +71,7 @@ public class Inventory extends javax.swing.JFrame {
             .add(AppNamePanelLayout.createSequentialGroup()
                 .add(335, 335, 335)
                 .add(QuickCartLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 281, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(394, Short.MAX_VALUE))
+                .addContainerGap(499, Short.MAX_VALUE))
         );
         AppNamePanelLayout.setVerticalGroup(
             AppNamePanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -93,7 +115,7 @@ public class Inventory extends javax.swing.JFrame {
         MenuPanelLayout.setHorizontalGroup(
             MenuPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, MenuPanelLayout.createSequentialGroup()
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(952, Short.MAX_VALUE)
                 .add(MenuPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(UpdateItemQButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                     .add(DeleteItemButton, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 120, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -132,15 +154,66 @@ public class Inventory extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+     
 
     private void AddItemButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AddItemButtonMouseClicked
+
+    // Create text fields for user input
+    JTextField idField = new JTextField();
+    JTextField nameField = new JTextField();
+    JTextField barcodeField = new JTextField();
+    JTextField quantityField = new JTextField();
+    JTextField priceField = new JTextField();
+    // Create a panel to hold the text fields
+    JPanel inputPanel = new JPanel();
+    inputPanel.setLayout(new GridLayout(5, 2));
+    inputPanel.add(new JLabel("Id:"));
+    inputPanel.add(idField);
+    inputPanel.add(new JLabel("Name:"));
+    inputPanel.add(nameField);
+    inputPanel.add(new JLabel("Barcode:"));
+    inputPanel.add(barcodeField);
+    inputPanel.add(new JLabel("Quantity:"));
+    inputPanel.add(quantityField);
+    inputPanel.add(new JLabel("Price:"));
+    inputPanel.add(priceField);
+
+    int result = JOptionPane.showConfirmDialog(null, inputPanel, "Enter Item Information",
+           JOptionPane.OK_CANCEL_OPTION);
+    
+    if (result == JOptionPane.OK_OPTION) {
+        // Retrieve user input
+        String id = idField.getText();
+        String name = nameField.getText();
+        String barcode = barcodeField.getText();
+        String quantity = quantityField.getText();
+        String price = priceField.getText();
+        // Validate input (add your own validation logic as needed)
+        if (id.isEmpty() || name.isEmpty() || barcode.isEmpty()|| quantity.isEmpty()|| price.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Please enter valid information.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; 
+        }
+
+        // Add the entered data to the JTable
+        String[] rowData = {id,name,barcode,quantity,price};
+        tableModel.addRow(rowData);
+
+        JOptionPane.showMessageDialog(null, "Item Added Successfully");
+    }
 
     }//GEN-LAST:event_AddItemButtonMouseClicked
 
     private void DeleteItemButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_DeleteItemButtonMouseClicked
-        ProductInfoRetrieval pir = new ProductInfoRetrieval();
-        pir.setVisible(true);
-        setVisible(false);
+         String deletedRow = JOptionPane.showInputDialog("Enter id of item you want to Delete");
+                if (inventoryTable.getSelectedRow() >= 0) {
+                    for (int i = 0; i < tableModel.getRowCount(); i++) {
+                        String id = tableModel.getValueAt(i, 0).toString();
+                        if (id.equals(deletedRow)) {
+                            tableModel.removeRow(i);
+                            break;
+                        }
+                    }
+                }
     }//GEN-LAST:event_DeleteItemButtonMouseClicked
     private void EditItemButtonMouseClicked(java.awt.event.MouseEvent evt) {                                              
         
