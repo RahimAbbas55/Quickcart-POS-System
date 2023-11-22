@@ -216,10 +216,42 @@ private JTable inventoryTable;
                 }
     }//GEN-LAST:event_DeleteItemButtonMouseClicked
     private void EditItemButtonMouseClicked(java.awt.event.MouseEvent evt) {                                              
-        
-    } 
+        if (inventoryTable.getSelectedRow() >= 0) {
+                    int selectedIndex = inventoryTable.getSelectedRow();
+                    String oldId = (String) tableModel.getValueAt(selectedIndex, 0);
+                    String oldName = (String) tableModel.getValueAt(selectedIndex, 1);
+                    String oldBarcode = (String) tableModel.getValueAt(selectedIndex, 2);
+                    String oldQuantity = (String) tableModel.getValueAt(selectedIndex, 3);
+                    String oldPrice = (String) tableModel.getValueAt(selectedIndex, 4);
+                    String newName = JOptionPane.showInputDialog(null, "Enter New Name: ");
+                    String newBarcode = JOptionPane.showInputDialog(null, "Enter New Barcode: ");
+                    String newQuantity = JOptionPane.showInputDialog(null, "Enter New Quantity: ");
+                    String newPrice = JOptionPane.showInputDialog(null, "Enter New Price: ");
+                    tableModel.setValueAt(oldId, selectedIndex, 0);
+                    tableModel.setValueAt(newName, selectedIndex, 1);
+                    tableModel.setValueAt(newBarcode, selectedIndex, 2);
+                    tableModel.setValueAt(newQuantity, selectedIndex, 3);
+                    tableModel.setValueAt(newPrice, selectedIndex, 4); 
+                    JOptionPane.showMessageDialog(null, "Item Updated Successfully!");
+        } 
+    }
     private void UpdateItemQButtonMouseClicked(java.awt.event.MouseEvent evt) {                                              
-        
+       if (inventoryTable.getSelectedRow() >= 0) {
+            int selectedIndex = inventoryTable.getSelectedRow();
+            try {
+                String itemsSoldString = JOptionPane.showInputDialog(null, "Enter number of Items sold");
+                String itemsAddedString = JOptionPane.showInputDialog(null, "Enter number of Items you want to add");
+                int itemsSold = Integer.parseInt(itemsSoldString);
+                int itemsAdded = Integer.parseInt(itemsAddedString);
+                int currentQuantity = (int) tableModel.getValueAt(selectedIndex, 3);
+                int updatedQuantity = currentQuantity + itemsAdded - itemsSold;
+                tableModel.setValueAt(updatedQuantity, selectedIndex, 3);
+                JOptionPane.showMessageDialog(null, "Item Quantity Updated Successfully!");
+            } 
+            catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid integer for Items sold and Items added.");
+            }
+        }  
     }
     /**
      * @param args the command line arguments
