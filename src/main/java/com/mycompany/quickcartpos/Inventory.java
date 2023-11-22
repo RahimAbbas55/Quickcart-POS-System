@@ -81,10 +81,6 @@ public class Inventory extends javax.swing.JFrame {
         }
     }
 
-    private void addRowToTable(String id, String name, String barcode, String quantity, String price) {
-        tableModel.addRow(new Object[]{id, name, barcode, quantity, price});
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
