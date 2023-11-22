@@ -6,6 +6,8 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Image;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -21,7 +23,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -39,14 +40,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         salesHistoryButton = new javax.swing.JLabel();
         OrdersButton = new javax.swing.JLabel();
         CartButton = new javax.swing.JLabel();
-        SearchPanel = new javax.swing.JPanel();
-        barcodeLabel = new javax.swing.JLabel();
-        barcodeField = new javax.swing.JTextField();
-        productsList = new javax.swing.JComboBox<>();
-        quantityLabel = new javax.swing.JLabel();
-        priceLabel = new javax.swing.JLabel();
-        quantityField = new javax.swing.JTextField();
-        priceField = new javax.swing.JTextField();
         addUpdateButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         newButton = new javax.swing.JButton();
@@ -56,6 +49,18 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         searchProductNameField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         productsTable = new javax.swing.JTable();
+        SearchPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        codeLabel = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        quantityLabel = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        priceLabel = new javax.swing.JLabel();
+        seachBarcode = new javax.swing.JButton();
+        seachProductName = new javax.swing.JButton();
+        refreshButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -138,73 +143,11 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(297, Short.MAX_VALUE))
-        );
-
-        SearchPanel.setBackground(new java.awt.Color(239, 225, 239));
-
-        barcodeLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        barcodeLabel.setText("Code");
-
-        productsList.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        productsList.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                productsListActionPerformed(evt);
-            }
-        });
-
-        quantityLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        quantityLabel.setText("Quantity");
-
-        priceLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        priceLabel.setText("Price");
-        priceLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
-
-        priceField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                priceFieldActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout SearchPanelLayout = new javax.swing.GroupLayout(SearchPanel);
-        SearchPanel.setLayout(SearchPanelLayout);
-        SearchPanelLayout.setHorizontalGroup(
-            SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SearchPanelLayout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(barcodeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(barcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addComponent(productsList, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addComponent(quantityLabel)
-                .addGap(29, 29, 29)
-                .addComponent(quantityField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(priceLabel)
-                .addGap(29, 29, 29)
-                .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
-        );
-        SearchPanelLayout.setVerticalGroup(
-            SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(SearchPanelLayout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addGroup(SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(priceLabel)
-                    .addComponent(priceField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(quantityField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(quantityLabel)
-                    .addComponent(productsList, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(barcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(barcodeLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         addUpdateButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
         addUpdateButton.setText("Update");
-        addUpdateButton.setActionCommand("Update");
         addUpdateButton.setFocusCycleRoot(true);
         addUpdateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -240,6 +183,12 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         searchProductNameLabel.setFont(new java.awt.Font("Segoe UI Historic", 0, 16)); // NOI18N
         searchProductNameLabel.setText("Search Product Name");
 
+        searchProductNameField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchProductNameFieldActionPerformed(evt);
+            }
+        });
+
         productsTable.setBackground(new java.awt.Color(239, 225, 239));
         productsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -256,6 +205,104 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         productsTable.setShowGrid(true);
         jScrollPane1.setViewportView(productsTable);
 
+        SearchPanel.setBackground(new java.awt.Color(239, 225, 239));
+        SearchPanel.setBackground(new java.awt.Color(239, 225, 239));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel1.setText("Code");
+
+        codeLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        codeLabel.setText("-");
+        codeLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel3.setText("Name");
+
+        nameLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        nameLabel.setText("-");
+        nameLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel5.setText("Quantity");
+
+        quantityLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        quantityLabel.setText("-");
+        quantityLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabel7.setText("Price");
+
+        priceLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        priceLabel.setText("-");
+        priceLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout SearchPanelLayout = new javax.swing.GroupLayout(SearchPanel);
+        SearchPanel.setLayout(SearchPanelLayout);
+        SearchPanelLayout.setHorizontalGroup(
+            SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SearchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(codeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(quantityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
+                .addComponent(priceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(29, 29, 29))
+        );
+        SearchPanelLayout.setVerticalGroup(
+            SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(SearchPanelLayout.createSequentialGroup()
+                .addGap(15, 15, 15)
+                .addGroup(SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(codeLabel)
+                    .addComponent(jLabel3)
+                    .addComponent(nameLabel)
+                    .addComponent(jLabel5)
+                    .addComponent(quantityLabel)
+                    .addComponent(jLabel7)
+                    .addComponent(priceLabel))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+
+        seachBarcode.setText("->");
+        seachBarcode.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        seachBarcode.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        seachBarcode.setIconTextGap(0);
+        seachBarcode.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        seachBarcode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seachBarcodeActionPerformed(evt);
+            }
+        });
+
+        seachProductName.setText("->");
+        seachProductName.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        seachProductName.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        seachProductName.setIconTextGap(0);
+        seachProductName.setMargin(new java.awt.Insets(2, 5, 3, 5));
+
+        refreshButton.setText("O");
+        refreshButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        refreshButton.setIconTextGap(0);
+        refreshButton.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        refreshButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                refreshButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -264,25 +311,33 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(SearchPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(refreshButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(newButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(deleteButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(addUpdateButton))
+                            .addComponent(SearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(20, 20, 20))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(searchBarcodeLabel)
                         .addGap(18, 18, 18)
                         .addComponent(searchbarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seachBarcode)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                         .addComponent(searchProductNameLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(newButton)
                         .addGap(18, 18, 18)
-                        .addComponent(deleteButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(addUpdateButton)
-                        .addGap(5, 5, 5)))
-                .addGap(20, 20, 20))
+                        .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(seachProductName)
+                        .addGap(38, 38, 38))))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -292,19 +347,22 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(searchBarcodeLabel)
                             .addComponent(searchbarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(searchProductNameLabel)
-                            .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(9, 9, 9)
+                            .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(seachBarcode)
+                            .addComponent(seachProductName))
+                        .addGap(10, 10, 10)
                         .addComponent(SearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(newButton)
                             .addComponent(deleteButton)
-                            .addComponent(addUpdateButton))
+                            .addComponent(addUpdateButton)
+                            .addComponent(refreshButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -323,10 +381,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         
     }//GEN-LAST:event_InventoryButtonMouseClicked
 
-    private void productsListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productsListActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_productsListActionPerformed
-
     private void addUpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUpdateButtonActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_addUpdateButtonActionPerformed
@@ -343,9 +397,17 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_searchbarcodeFieldActionPerformed
 
-    private void priceFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_priceFieldActionPerformed
+    private void searchProductNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchProductNameFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_priceFieldActionPerformed
+    }//GEN-LAST:event_searchProductNameFieldActionPerformed
+
+    private void seachBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachBarcodeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_seachBarcodeActionPerformed
+
+    private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_refreshButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -392,18 +454,22 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel QuickCartLabel;
     private javax.swing.JPanel SearchPanel;
     private javax.swing.JButton addUpdateButton;
-    private javax.swing.JTextField barcodeField;
-    private javax.swing.JLabel barcodeLabel;
+    private javax.swing.JLabel codeLabel;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JButton newButton;
-    private javax.swing.JTextField priceField;
     private javax.swing.JLabel priceLabel;
-    private javax.swing.JComboBox<String> productsList;
     private javax.swing.JTable productsTable;
-    private javax.swing.JTextField quantityField;
     private javax.swing.JLabel quantityLabel;
+    private javax.swing.JButton refreshButton;
     private javax.swing.JLabel salesHistoryButton;
+    private javax.swing.JButton seachBarcode;
+    private javax.swing.JButton seachProductName;
     private javax.swing.JLabel searchBarcodeLabel;
     private javax.swing.JTextField searchProductNameField;
     private javax.swing.JLabel searchProductNameLabel;
