@@ -20,10 +20,14 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.Socket;
+import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -42,8 +46,6 @@ import javax.swing.table.TableCellEditor;
  * @author hp
  */
 public class Cart extends javax.swing.JFrame {
-
-    int endOfTable = 0;
 
     public class QuantityRenderer extends DefaultTableCellRenderer {
 
@@ -100,7 +102,7 @@ public class Cart extends javax.swing.JFrame {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            //setQuantity(Integer.parseInt(value.toString()));
+            setQuantity(Integer.parseInt(value.toString()));
             setText(quantityLabel.getText());
             return this;
         }
@@ -125,8 +127,9 @@ public class Cart extends javax.swing.JFrame {
 
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            // Return the editor component, not the renderer component
-//            renderer.setQuantity(Integer.parseInt(value.toString()));
+            //Return the editor component, not the renderer component
+            //renderer.setQuantity(Integer.parseInt(value.toString()));
+            //renderer.setText(renderer.quantityLabel.getText());
             return renderer;
         }
 
@@ -139,13 +142,13 @@ public class Cart extends javax.swing.JFrame {
     /**
      * Creates new form Cart
      */
+    int endRow;
+
     public Cart() {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
-
         checkDatabaseForBarcode();
-
     }
 
     public String fetchSheetData() {
@@ -166,24 +169,33 @@ public class Cart extends javax.swing.JFrame {
                         .build();
                 String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
                 String lastRowRange = "B:B";
+                System.out.println("spreadsheetId = "+spreadsheetId);
                 ValueRange lastRowResponse = sheetsService.spreadsheets().values()
                         .get(spreadsheetId, lastRowRange)
                         .execute();
 
                 List<List<Object>> lastRowValues = lastRowResponse.getValues();
+                
+                    
                 if (lastRowValues != null && !lastRowValues.isEmpty()) {
-
                     int lastRow = lastRowValues.size();
+                    //System.out.println("lastRow = "+ lastRow);
+                    if (endRow == lastRow) {
+                        return "0";
+                    } else {
                         String range = "B" + lastRow;
                         ValueRange response = sheetsService.spreadsheets().values()
                                 .get(spreadsheetId, range)
                                 .execute();
 
                         List<List<Object>> values = response.getValues();
+
                         if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
+                            endRow = lastRow;
                             return values.get(0).get(0).toString();
                         }
 
+                    }
                 }
                 return "1";
             } else {
@@ -191,18 +203,22 @@ public class Cart extends javax.swing.JFrame {
                 return "2";
             }
         } catch (IOException | GeneralSecurityException e) {
-            e.printStackTrace();
-            return "3";
+            //e.printStackTrace();
+            //e.getMessage();
+            return "0";
         }
     }
+
     public void updateTable() {
         checkDatabaseForBarcode();
-        // Add a new row to the table model
     }
 
     public void checkDatabaseForBarcode() {
         String scannedBarcode = fetchSheetData();
-        System.out.print(scannedBarcode);
+        if (scannedBarcode.equals("0")) {
+            return;
+        }
+        System.out.println(scannedBarcode);
 
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123");
@@ -223,7 +239,7 @@ public class Cart extends javax.swing.JFrame {
 
                 DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
                 // Clear existing rows
-                model.setRowCount(0);
+                //model.setRowCount(0);
 
                 // Add a row with buttons to the respective row
                 Object[] rowData = new Object[100];
@@ -235,7 +251,7 @@ public class Cart extends javax.swing.JFrame {
                 rowData[2] = price;
                 model.addRow(rowData);
             } else {
-                JOptionPane.showMessageDialog(null, scannedBarcode + "Product not found in the inventory.");
+                JOptionPane.showMessageDialog(null, "Product " + scannedBarcode + " not found in the inventory.");
             }
 
             resultSet.close();
@@ -353,17 +369,13 @@ public class Cart extends javax.swing.JFrame {
 
         cartTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
             },
             new String [] {
                 "Name", "Quantity", "Price"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, true, false
             };
         });
         jScrollPane1.setViewportView(cartTable);
@@ -435,11 +447,18 @@ public class Cart extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            
-            new Cart().setVisible(true);
+            Cart c = new Cart();
+            Socket socket = new Socket();
+            try {
+                socket.setSoTimeout(300000);
+            } catch (SocketException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            c.setVisible(true);
             Timer timer; // 5000 milliseconds (5 seconds)
             timer = new Timer(5000, e -> {
-                new Cart().updateTable();
+                c.updateTable();
+
             });
             timer.start();
         });
