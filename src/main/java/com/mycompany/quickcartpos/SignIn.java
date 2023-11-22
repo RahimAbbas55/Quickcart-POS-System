@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.mycompany.quickcartpos;
 
 import java.awt.Color;
@@ -15,10 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- *
- * @author Hp
- */
 public class SignIn extends javax.swing.JFrame {
 
     String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
@@ -204,13 +196,11 @@ public class SignIn extends javax.swing.JFrame {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        
                         Home h = new Home();
                         Home.setLoggedInUsername(enteredUsername);
                         h.setVisible(true);
                         setVisible(false);
                     } else {
-                        
                         JOptionPane.showMessageDialog(null, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
                     }
                 }

@@ -37,21 +37,43 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
 
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-/**
- *
- * @author hp
- */
 public class Cart extends javax.swing.JFrame {
+    public class QuantityButtonEditor extends AbstractCellEditor implements TableCellEditor {
 
+        private QuantityRenderer renderer;
+
+        public QuantityButtonEditor() {
+            renderer = new QuantityRenderer();
+            renderer.plusButton.setBackground(new Color(213,190,216));
+            renderer.getPlusButton().addActionListener(e -> {
+                renderer.handlePlusButton();
+                fireEditingStopped();
+            });
+
+            renderer.minusButton.setBackground(new Color(213,190,216));
+            renderer.getMinusButton().addActionListener(e -> {
+                renderer.handleMinusButton();
+                fireEditingStopped();
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+            renderer.setQuantity(Integer.parseInt(value.toString()));
+            renderer.setText(renderer.quantityLabel.getText());
+            return renderer;
+        }
+        @Override
+        public Object getCellEditorValue() {
+            return renderer.getQuantity();
+        }
+    }
+    
     public class QuantityRenderer extends DefaultTableCellRenderer {
 
         private JLabel quantityLabel;
-        private JButton plusButton;
-        private JButton minusButton;
+        private final JButton plusButton;
+        private final JButton minusButton;
 
         public QuantityRenderer() {
             quantityLabel = new JLabel("1");
@@ -61,9 +83,6 @@ public class Cart extends javax.swing.JFrame {
             add(plusButton, BorderLayout.WEST);
             add(quantityLabel, BorderLayout.CENTER);
             add(minusButton, BorderLayout.EAST);
-
-            plusButton.addActionListener(e -> handlePlusButton());
-            minusButton.addActionListener(e -> handleMinusButton());
         }
 
         public void setQuantity(int quantity) {
@@ -72,17 +91,20 @@ public class Cart extends javax.swing.JFrame {
 
         private void handlePlusButton() {
             int selectedRow = cartTable.getSelectedRow();
-            //Object q = cartTable.getValueAt(selectedRow, 1);
             int quantity = getQuantity();
-            System.out.println("Row" + selectedRow + "Quantity " + quantity);
-            //cartTable.setValueAt(quantity + 1, selectedRow, 1);
-            setQuantity(quantity + 1);
+            System.out.println("Row " + selectedRow + " Quantity " + quantity);
+            if (quantity < actualProdQuantity) {
+                setQuantity(quantity + 1);
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Only " + actualProdQuantity + " products are available in the inventory.");
+            }
         }
 
         private void handleMinusButton() {
             int selectedRow = cartTable.getSelectedRow();
             int quantity = getQuantity();
-            System.out.println("Row" + selectedRow + "Quantity " + quantity);
+            System.out.println("Row " + selectedRow + " Quantity " + quantity);
             if (quantity > 0) {
                 setQuantity(quantity - 1);
             }
@@ -107,43 +129,9 @@ public class Cart extends javax.swing.JFrame {
             return this;
         }
     }
-
-    public class QuantityButtonEditor extends AbstractCellEditor implements TableCellEditor {
-
-        private QuantityRenderer renderer;
-
-        public QuantityButtonEditor() {
-            renderer = new QuantityRenderer();
-            renderer.getPlusButton().addActionListener(e -> {
-                //renderer.handlePlusButton();
-                //fireEditingStopped();
-            });
-
-            renderer.getMinusButton().addActionListener(e -> {
-                //renderer.handleMinusButton();
-                //fireEditingStopped();
-            });
-        }
-
-        @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            //Return the editor component, not the renderer component
-            //renderer.setQuantity(Integer.parseInt(value.toString()));
-            //renderer.setText(renderer.quantityLabel.getText());
-            return renderer;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            return renderer.getQuantity();
-        }
-    }
-
-    /**
-     * Creates new form Cart
-     */
+    
     int endRow;
-
+    int actualProdQuantity;
     public Cart() {
         initComponents();
         Container con = getContentPane();
@@ -169,18 +157,18 @@ public class Cart extends javax.swing.JFrame {
                         .build();
                 String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
                 String lastRowRange = "B:B";
-                System.out.println("spreadsheetId = "+spreadsheetId);
+                //System.out.println("spreadsheetId = "+spreadsheetId);
                 ValueRange lastRowResponse = sheetsService.spreadsheets().values()
                         .get(spreadsheetId, lastRowRange)
                         .execute();
 
                 List<List<Object>> lastRowValues = lastRowResponse.getValues();
-                
-                    
+
                 if (lastRowValues != null && !lastRowValues.isEmpty()) {
                     int lastRow = lastRowValues.size();
-                    //System.out.println("lastRow = "+ lastRow);
-                    if (endRow == lastRow) {
+                    System.out.println("End row: " + endRow + " Last row: " + lastRow);
+                    if (endRow >= lastRow) {
+                        endRow = lastRow;
                         return "0";
                     } else {
                         String range = "B" + lastRow;
@@ -236,18 +224,16 @@ public class Cart extends javax.swing.JFrame {
                     writer.write(productName + "," + quantity + "," + price + "\n");
                 } catch (Exception ex) {
                 }
-
+                actualProdQuantity = quantity;
                 DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
-                // Clear existing rows
                 //model.setRowCount(0);
-
-                // Add a row with buttons to the respective row
                 Object[] rowData = new Object[100];
                 rowData[0] = productName;
                 rowData[1] = "1";
-                cartTable.getColumnModel().getColumn(1).setCellRenderer(new QuantityRenderer());
+                QuantityRenderer qr = new QuantityRenderer();
                 cartTable.getColumnModel().getColumn(1).setCellEditor(new QuantityButtonEditor());
-
+                cartTable.getColumnModel().getColumn(1).setCellRenderer(qr);
+                cartTable.setFocusable(false);
                 rowData[2] = price;
                 model.addRow(rowData);
             } else {
@@ -409,7 +395,9 @@ public class Cart extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-
+        Home h = new Home();
+        h.setVisible(true);
+        setVisible(false);
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
