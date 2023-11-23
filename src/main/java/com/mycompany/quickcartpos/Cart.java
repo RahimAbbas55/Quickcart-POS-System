@@ -63,7 +63,10 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 
 public class Cart extends javax.swing.JFrame {
 
@@ -163,13 +166,18 @@ public class Cart extends javax.swing.JFrame {
     int endRow;
     int actualProdQuantity;
     String payment;
+
     public Cart() {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
         checkDatabaseForBarcode();
         paymentButtonGroup.add(cashPayment);
+        cashPayment.setBackground(Color.WHITE);
+        cashPayment.setOpaque(true);
         paymentButtonGroup.add(jazzCashPayment);
+        jazzCashPayment.setBackground(Color.WHITE);
+        jazzCashPayment.setOpaque(true);
     }
 
     public String fetchSheetData() {
@@ -253,10 +261,6 @@ public class Cart extends javax.swing.JFrame {
                 int quantity = resultSet.getInt("quantity");
                 double price = resultSet.getDouble("price");
 
-                try (FileWriter writer = new FileWriter("C:\\Users\\hp\\Desktop\\output.txt")) {
-                    writer.write(productName + "," + quantity + "," + price + "\n");
-                } catch (Exception ex) {
-                }
                 actualProdQuantity = quantity;
                 DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
                 //model.setRowCount(0);
@@ -269,6 +273,10 @@ public class Cart extends javax.swing.JFrame {
                 cartTable.setFocusable(false);
                 rowData[2] = price;
                 model.addRow(rowData);
+                try (FileWriter writer = new FileWriter("C:\\Users\\hp\\Desktop\\cart.txt", true)) {
+                    writer.write(scannedBarcode + "\n");
+                } catch (Exception ex) {
+                }
             } else {
                 JOptionPane.showMessageDialog(null, "Product " + scannedBarcode + " not found in the inventory.");
             }
@@ -484,38 +492,76 @@ public class Cart extends javax.swing.JFrame {
     }//GEN-LAST:event_InventoryButtonMouseClicked
 
     private void billButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_billButonActionPerformed
-        DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
-        int rowCount = model.getRowCount();
-        double totalAmount = 0.0;
-        Date now = new Date();
-        
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDateTime = dateFormat.format(now);
-        Home h = new Home();
-        Font f = new Font("Segoe UI", Font.PLAIN, 18);
-        String s = "*************************************************************************************************\n";
-        String d = "--------------------------------------------------------------------------------------------------------------------------\n";
-        StringBuilder billContent = new StringBuilder(s+"\t\t        QUICKCART\n");
-        billContent.append(s).append("\nDate: ").append(formattedDateTime).append("\nPrinted by: ").append(h.name.getText()).append("\n").append(d).append("\nName\t\tQuantity\t\tTotal\n\n");
-        
-        for (int i = 0; i < rowCount; i++) {
-            String productName = model.getValueAt(i, 0).toString();
-            int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
-            double price = Double.parseDouble(model.getValueAt(i, 2).toString());
-            double itemTotal = quantity * price;
-
-            totalAmount += itemTotal;
-
-            billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
-                    .append("\t\t Rs.").append(itemTotal).append("\n");
+        BufferedReader reader = null;
+        try {
+            DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+            int rowCount = model.getRowCount();
+            double totalAmount = 0.0;
+            Date now = new Date();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String formattedDateTime = dateFormat.format(now);
+            Home h = new Home();
+            Font f = new Font("Segoe UI", Font.PLAIN, 18);
+            String s = "*************************************************************************************************\n";
+            String d = "--------------------------------------------------------------------------------------------------------------------------\n";
+            StringBuilder billContent = new StringBuilder(s + "\t\t        QUICKCART\n");
+            billContent.append(s).append("\nDate: ").append(formattedDateTime).append("\nPrinted by: ").append(h.name.getText()).append("\n").append(d).append("\nName\t\tQuantity\t\tTotal\n\n");
+            reader = new BufferedReader(new FileReader("C:\\Users\\hp\\Desktop\\cart.txt"));
+            String bcode;
+            reader.readLine();
+            for (int i = 0; i < rowCount; i++) {
+                String productName = model.getValueAt(i, 0).toString();
+                int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
+                double price = Double.parseDouble(model.getValueAt(i, 2).toString());
+                double itemTotal = quantity * price;
+                bcode = reader.readLine();
+                int actualQuantity = getActualQuantity(bcode);
+                int q = actualQuantity - quantity;
+                System.out.println("q: "+q+" actualQuantity: "+actualQuantity+" quantity: "+quantity);
+                updateQuantityInDB(q, bcode);
+                totalAmount += itemTotal;
+                billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
+                        .append("\t\t Rs.").append(itemTotal).append("\n");
+            }
+            double gst = 0.17 * totalAmount;
+            billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
+            billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append("\n").append(payment);
+            showBillDialog(billContent.toString());
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
-        double gst = 0.17 * totalAmount;
-        billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
-        billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append(payment);
-        showBillDialog(billContent.toString());
     }//GEN-LAST:event_billButonActionPerformed
-
+    private int getActualQuantity(String barcode){
+        String name;
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
+            String query = "SELECT name,quantity FROM Inventory WHERE barcode = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, barcode);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        name = resultSet.getString("name");
+                        System.out.println("name: "+name);
+                        return resultSet.getInt("quantity");
+                    } else {
+                        System.err.println("Barcode not found: " + barcode);
+                        return -1;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
     private void cashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cashPaymentActionPerformed
         payment = "Payment via cash";
     }//GEN-LAST:event_cashPaymentActionPerformed
@@ -523,7 +569,7 @@ public class Cart extends javax.swing.JFrame {
     private void jazzCashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jazzCashPaymentActionPerformed
         payment = "Payment via Jazz Cash";
     }//GEN-LAST:event_jazzCashPaymentActionPerformed
-    
+
     private void showBillDialog(String billContent) {
         JTextArea billTextArea = new JTextArea(billContent);
         JButton printButton = new JButton("Print");
@@ -537,58 +583,47 @@ public class Cart extends javax.swing.JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(scrollPane, BorderLayout.CENTER);
         panel.add(printButton, BorderLayout.SOUTH);
-       //billTextArea.setEditable(false);
+        //billTextArea.setEditable(false);
         JOptionPane.showMessageDialog(this, panel, "Generated Bill", JOptionPane.INFORMATION_MESSAGE);
     }
+
     private void printToPDF(String textToPrint) {
-    try {
-        Document document = new Document();
-        PdfWriter.getInstance(document, new FileOutputStream("output.pdf"));
-        document.open();
-        document.add(new Paragraph(textToPrint));
-        document.close();
-        System.out.println("PDF printed successfully.");
-        JOptionPane.showMessageDialog(this, "PDF printed successfully.", "Printed", JOptionPane.INFORMATION_MESSAGE);
-    } catch (IOException | DocumentException ex) {
-        ex.printStackTrace();
-    }
-    }
-    private void printBillToPDF2(String billContent) {
         try {
-            // Create a PDF document
-            PDDocument document = new PDDocument();
-            PDPage page = new PDPage(PDRectangle.A4);
-            document.addPage(page);
-
-            // Create a content stream for adding content to the PDF
-            PDPageContentStream contentStream = new PDPageContentStream(document, page);
-
-            // Set font and position
-            //contentStream.setFont("Segou UI", 12);
-            contentStream.beginText();
-            contentStream.newLineAtOffset(20, page.getMediaBox().getHeight() - 20);
-            billContent = billContent.replace("\t", "    ");
-
-            // Write the bill content to the PDF
-            contentStream.showText(billContent);
-
-            // Close the content stream
-            contentStream.endText();
-            contentStream.close();
-
-            // Save the document to a file
-            String fileName = "GeneratedBill.pdf";
-            document.save(fileName);
+            Document document = new Document();
+            PdfWriter.getInstance(document, new FileOutputStream("output.pdf"));
+            document.open();
+            document.add(new Paragraph(textToPrint));
             document.close();
+            System.out.println("PDF printed successfully.");
+            JOptionPane.showMessageDialog(this, "PDF printed successfully.", "Printed", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException | DocumentException ex) {
+            ex.printStackTrace();
+        }
+    }
 
-            JOptionPane.showMessageDialog(this, "Bill saved to " + fileName, "PDF Saved", JOptionPane.INFORMATION_MESSAGE);
-        } catch (IOException e) {
+    private void updateQuantityInDB(int newQuantity, String prodBarcode) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
+
+            String updateQuery = "UPDATE inventory SET quantity = ? WHERE barcode = ?";
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                preparedStatement.setInt(1, newQuantity);
+                preparedStatement.setString(2, prodBarcode);
+
+                // Execute the update query
+                int rowsUpdated = preparedStatement.executeUpdate();
+
+                if (rowsUpdated > 0) {
+                    System.out.println("Quantity updated successfully.");
+                } else {
+                    System.out.println("Failed to update quantity.");
+                }
+            }
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    /**
-     * @param args the command line arguments
-     */
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

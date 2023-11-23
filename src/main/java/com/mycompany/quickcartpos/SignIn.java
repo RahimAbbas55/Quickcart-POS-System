@@ -212,8 +212,8 @@ public class SignIn extends javax.swing.JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Unable to connect to the database.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
-        
-       Home h = new Home();
+        this.dispose();
+        Home h = new Home();
         h.setLoggedInUsername(enteredUsername);
         h.setVisible(true);
         setVisible(false);
