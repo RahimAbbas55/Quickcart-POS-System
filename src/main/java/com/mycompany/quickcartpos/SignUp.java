@@ -123,12 +123,31 @@ public class SignUp extends javax.swing.JFrame {
         tfUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         jPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jPassword.setForeground(new java.awt.Color(153, 153, 153));
         jPassword.setText("jPasswordField1");
+        jPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPasswordMouseClicked(evt);
+            }
+        });
 
         jConfirmPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jConfirmPassword.setForeground(new java.awt.Color(153, 153, 153));
         jConfirmPassword.setText("jPasswordField2");
+        jConfirmPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jConfirmPasswordMouseClicked(evt);
+            }
+        });
 
         tfEmail.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        tfEmail.setForeground(new java.awt.Color(153, 153, 153));
+        tfEmail.setText("example@gmail.com");
+        tfEmail.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tfEmailMouseClicked(evt);
+            }
+        });
         tfEmail.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tfEmailActionPerformed(evt);
@@ -292,6 +311,21 @@ public class SignUp extends javax.swing.JFrame {
     private void tfCNICActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCNICActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfCNICActionPerformed
+
+    private void jPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPasswordMouseClicked
+        jPassword.setText("");
+        jPassword.setForeground(Color.BLACK);
+    }//GEN-LAST:event_jPasswordMouseClicked
+
+    private void jConfirmPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jConfirmPasswordMouseClicked
+        jConfirmPassword.setText("");
+        jConfirmPassword.setForeground(Color.BLACK);
+    }//GEN-LAST:event_jConfirmPasswordMouseClicked
+
+    private void tfEmailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfEmailMouseClicked
+        tfEmail.setText("");
+        tfEmail.setForeground(Color.BLACK);
+    }//GEN-LAST:event_tfEmailMouseClicked
 
     /**
      * @param args the command line arguments
