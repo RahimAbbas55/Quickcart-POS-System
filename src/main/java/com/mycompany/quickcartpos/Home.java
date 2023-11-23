@@ -3,11 +3,16 @@ package com.mycompany.quickcartpos;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.net.Socket;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Timer;
 
 public class Home extends javax.swing.JFrame {
     public static String loggedInUsername;
@@ -319,6 +324,20 @@ public class Home extends javax.swing.JFrame {
         Cart cartPage = new Cart();
         cartPage.setVisible(true);
         this.setVisible(false);
+            Cart c = new Cart();
+            Socket socket = new Socket();
+            try {
+                socket.setSoTimeout(300000);
+            } catch (SocketException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            c.setVisible(true);
+            Timer timer; // 5000 milliseconds (5 seconds)
+            timer = new Timer(5000, e -> {
+                c.updateTable();
+
+            });
+            timer.start();
     }//GEN-LAST:event_CartButtonMouseClicked
     
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
@@ -408,7 +427,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel name;
+    public javax.swing.JLabel name;
     private javax.swing.JLabel phoneNo;
     private javax.swing.JLabel salesHistoryButton;
     // End of variables declaration//GEN-END:variables

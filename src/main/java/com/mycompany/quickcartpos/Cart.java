@@ -17,40 +17,69 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.security.GeneralSecurityException;
+import java.util.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.Timer;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+//import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.Position;
+import javax.swing.text.Segment;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import java.io.FileOutputStream;
 
 public class Cart extends javax.swing.JFrame {
+
     public class QuantityButtonEditor extends AbstractCellEditor implements TableCellEditor {
 
         private QuantityRenderer renderer;
 
         public QuantityButtonEditor() {
             renderer = new QuantityRenderer();
-            renderer.plusButton.setBackground(new Color(213,190,216));
+            renderer.plusButton.setBackground(new Color(213, 190, 216));
             renderer.getPlusButton().addActionListener(e -> {
                 renderer.handlePlusButton();
                 fireEditingStopped();
             });
 
-            renderer.minusButton.setBackground(new Color(213,190,216));
+            renderer.minusButton.setBackground(new Color(213, 190, 216));
             renderer.getMinusButton().addActionListener(e -> {
                 renderer.handleMinusButton();
                 fireEditingStopped();
@@ -63,12 +92,13 @@ public class Cart extends javax.swing.JFrame {
             renderer.setText(renderer.quantityLabel.getText());
             return renderer;
         }
+
         @Override
         public Object getCellEditorValue() {
             return renderer.getQuantity();
         }
     }
-    
+
     public class QuantityRenderer extends DefaultTableCellRenderer {
 
         private JLabel quantityLabel;
@@ -93,10 +123,10 @@ public class Cart extends javax.swing.JFrame {
             int selectedRow = cartTable.getSelectedRow();
             int quantity = getQuantity();
             System.out.println("Row " + selectedRow + " Quantity " + quantity);
-            if (quantity < actualProdQuantity) {
+            Object q = cartTable.getValueAt(selectedRow, 1);
+            if (Integer.parseInt(q.toString()) < actualProdQuantity) {
                 setQuantity(quantity + 1);
-            }
-            else{
+            } else {
                 JOptionPane.showMessageDialog(null, "Only " + actualProdQuantity + " products are available in the inventory.");
             }
         }
@@ -129,14 +159,17 @@ public class Cart extends javax.swing.JFrame {
             return this;
         }
     }
-    
+
     int endRow;
     int actualProdQuantity;
+    String payment;
     public Cart() {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
         checkDatabaseForBarcode();
+        paymentButtonGroup.add(cashPayment);
+        paymentButtonGroup.add(jazzCashPayment);
     }
 
     public String fetchSheetData() {
@@ -257,6 +290,7 @@ public class Cart extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        paymentButtonGroup = new javax.swing.ButtonGroup();
         AppNamePanel = new javax.swing.JPanel();
         QuickCartLabel = new javax.swing.JLabel();
         MenuPanel = new javax.swing.JPanel();
@@ -267,6 +301,10 @@ public class Cart extends javax.swing.JFrame {
         CartButton = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         cartTable = new javax.swing.JTable();
+        billButon = new javax.swing.JButton();
+        cashPayment = new javax.swing.JRadioButton();
+        jazzCashPayment = new javax.swing.JRadioButton();
+        PayementMethod = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cart");
@@ -366,6 +404,30 @@ public class Cart extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(cartTable);
 
+        billButon.setText("Generate Bill");
+        billButon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                billButonActionPerformed(evt);
+            }
+        });
+
+        cashPayment.setText("Cash");
+        cashPayment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cashPaymentActionPerformed(evt);
+            }
+        });
+
+        jazzCashPayment.setText("Jazz Cash");
+        jazzCashPayment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jazzCashPaymentActionPerformed(evt);
+            }
+        });
+
+        PayementMethod.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        PayementMethod.setText("Payment Method");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -375,8 +437,14 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(144, 144, 144)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(66, 66, 66)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cashPayment)
+                            .addComponent(jazzCashPayment)
+                            .addComponent(PayementMethod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(billButon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -387,7 +455,16 @@ public class Cart extends javax.swing.JFrame {
                     .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(PayementMethod)
+                                .addGap(15, 15, 15)
+                                .addComponent(cashPayment)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jazzCashPayment)
+                                .addGap(22, 22, 22)
+                                .addComponent(billButon)))
                         .addGap(49, 49, 49))))
         );
 
@@ -406,6 +483,109 @@ public class Cart extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_InventoryButtonMouseClicked
 
+    private void billButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_billButonActionPerformed
+        DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+        int rowCount = model.getRowCount();
+        double totalAmount = 0.0;
+        Date now = new Date();
+        
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTime = dateFormat.format(now);
+        Home h = new Home();
+        Font f = new Font("Segoe UI", Font.PLAIN, 18);
+        String s = "*************************************************************************************************\n";
+        String d = "--------------------------------------------------------------------------------------------------------------------------\n";
+        StringBuilder billContent = new StringBuilder(s+"\t\t        QUICKCART\n");
+        billContent.append(s).append("\nDate: ").append(formattedDateTime).append("\nPrinted by: ").append(h.name.getText()).append("\n").append(d).append("\nName\t\tQuantity\t\tTotal\n\n");
+        
+        for (int i = 0; i < rowCount; i++) {
+            String productName = model.getValueAt(i, 0).toString();
+            int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
+            double price = Double.parseDouble(model.getValueAt(i, 2).toString());
+            double itemTotal = quantity * price;
+
+            totalAmount += itemTotal;
+
+            billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
+                    .append("\t\t Rs.").append(itemTotal).append("\n");
+        }
+
+        double gst = 0.17 * totalAmount;
+        billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
+        billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append(payment);
+        showBillDialog(billContent.toString());
+    }//GEN-LAST:event_billButonActionPerformed
+
+    private void cashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cashPaymentActionPerformed
+        payment = "Payment via cash";
+    }//GEN-LAST:event_cashPaymentActionPerformed
+
+    private void jazzCashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jazzCashPaymentActionPerformed
+        payment = "Payment via Jazz Cash";
+    }//GEN-LAST:event_jazzCashPaymentActionPerformed
+    
+    private void showBillDialog(String billContent) {
+        JTextArea billTextArea = new JTextArea(billContent);
+        JButton printButton = new JButton("Print");
+        printButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                printToPDF(billContent);
+            }
+        });
+        JScrollPane scrollPane = new JScrollPane(billTextArea);
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(printButton, BorderLayout.SOUTH);
+       //billTextArea.setEditable(false);
+        JOptionPane.showMessageDialog(this, panel, "Generated Bill", JOptionPane.INFORMATION_MESSAGE);
+    }
+    private void printToPDF(String textToPrint) {
+    try {
+        Document document = new Document();
+        PdfWriter.getInstance(document, new FileOutputStream("output.pdf"));
+        document.open();
+        document.add(new Paragraph(textToPrint));
+        document.close();
+        System.out.println("PDF printed successfully.");
+        JOptionPane.showMessageDialog(this, "PDF printed successfully.", "Printed", JOptionPane.INFORMATION_MESSAGE);
+    } catch (IOException | DocumentException ex) {
+        ex.printStackTrace();
+    }
+    }
+    private void printBillToPDF2(String billContent) {
+        try {
+            // Create a PDF document
+            PDDocument document = new PDDocument();
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+
+            // Create a content stream for adding content to the PDF
+            PDPageContentStream contentStream = new PDPageContentStream(document, page);
+
+            // Set font and position
+            //contentStream.setFont("Segou UI", 12);
+            contentStream.beginText();
+            contentStream.newLineAtOffset(20, page.getMediaBox().getHeight() - 20);
+            billContent = billContent.replace("\t", "    ");
+
+            // Write the bill content to the PDF
+            contentStream.showText(billContent);
+
+            // Close the content stream
+            contentStream.endText();
+            contentStream.close();
+
+            // Save the document to a file
+            String fileName = "GeneratedBill.pdf";
+            document.save(fileName);
+            document.close();
+
+            JOptionPane.showMessageDialog(this, "Bill saved to " + fileName, "PDF Saved", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -459,9 +639,14 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JLabel InventoryButton;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel OrdersButton;
+    private javax.swing.JLabel PayementMethod;
     private javax.swing.JLabel QuickCartLabel;
+    private javax.swing.JButton billButon;
     private javax.swing.JTable cartTable;
+    private javax.swing.JRadioButton cashPayment;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton jazzCashPayment;
+    private javax.swing.ButtonGroup paymentButtonGroup;
     private javax.swing.JLabel salesHistoryButton;
     // End of variables declaration//GEN-END:variables
 }
