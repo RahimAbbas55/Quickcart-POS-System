@@ -321,6 +321,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_LogoutButtonMouseClicked
 
     private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+        this.dispose();
         Cart cartPage = new Cart();
         cartPage.setVisible(true);
         this.setVisible(false);
