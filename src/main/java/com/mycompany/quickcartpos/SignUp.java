@@ -1,12 +1,13 @@
 package com.mycompany.quickcartpos;
+
 import java.awt.Color;
 import java.awt.Container;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
 public class SignUp extends javax.swing.JFrame {
-    
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost:3306/quickcartdb";
     static final String USER = "root";
@@ -256,13 +257,9 @@ public class SignUp extends javax.swing.JFrame {
             if (!password.equals(confirmPassword)) {
                 return;
             }
-
             try {
-                
                 Class.forName(JDBC_DRIVER);
-
                 try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-                  
                     String sql = "INSERT INTO users (username, password, email, number, cnic, address) VALUES (?, ?, ?, ?, ?, ?)";
                     try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         pstmt.setString(1, username);
@@ -271,17 +268,15 @@ public class SignUp extends javax.swing.JFrame {
                         pstmt.setString(4, number);
                         pstmt.setString(5, cnic);
                         pstmt.setString(6, address);
-
                         pstmt.executeUpdate();
+                        SignIn si = new SignIn();
+                        si.setVisible(true);
+                        setVisible(false);
                     }
                 }
             } catch (ClassNotFoundException | SQLException ex) {
-            
                 ex.printStackTrace();
             }
-        SignIn si = new SignIn();
-        si.setVisible(true);
-        setVisible(false);
     }//GEN-LAST:event_signUpButtonActionPerformed
 
     private void tfAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAddressActionPerformed
