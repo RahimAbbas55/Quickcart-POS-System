@@ -2,6 +2,8 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -10,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.Timer;
 
 public class SignIn extends javax.swing.JFrame {
 
@@ -228,10 +231,8 @@ public class SignIn extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
        
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new SignIn().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new SignIn().setVisible(true);
         });
     }
 
