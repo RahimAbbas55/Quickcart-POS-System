@@ -2,17 +2,45 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.GridLayout;
 import java.awt.Image;
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 public class ProductInfoRetrieval extends javax.swing.JFrame {
-
+    private static final String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
+    private static final String usernameDB = "root";
+    private static final String passwordDB = "root123";
+    private Connection connection;
+    private DefaultTableModel tableModel;
+    
     public ProductInfoRetrieval() {
         initComponents();
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
+        connectToDatabase();
+        initTable();
     }
-    
+     private void initTable() {
+        String[] columnNames = {"ID", "Name", "Barcode", "Quantity", "Price"};
+        tableModel = new DefaultTableModel(null, columnNames);
+        productsTable = new JTable(tableModel);
+        JScrollPane scrollPane = new JScrollPane(productsTable);
+        add(scrollPane);
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -25,9 +53,9 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         salesHistoryButton = new javax.swing.JLabel();
         OrdersButton = new javax.swing.JLabel();
         CartButton = new javax.swing.JLabel();
-        addUpdateButton = new javax.swing.JButton();
+        editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
-        newButton = new javax.swing.JButton();
+        addButton = new javax.swing.JButton();
         searchBarcodeLabel = new javax.swing.JLabel();
         searchbarcodeField = new javax.swing.JTextField();
         searchProductNameLabel = new javax.swing.JLabel();
@@ -46,6 +74,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         seachBarcode = new javax.swing.JButton();
         seachProductName = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
+        updateButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,12 +160,12 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        addUpdateButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
-        addUpdateButton.setText("Update");
-        addUpdateButton.setFocusCycleRoot(true);
-        addUpdateButton.addActionListener(new java.awt.event.ActionListener() {
+        editButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        editButton.setText("Edit");
+        editButton.setFocusCycleRoot(true);
+        editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addUpdateButtonActionPerformed(evt);
+                editButtonActionPerformed(evt);
             }
         });
 
@@ -148,11 +177,11 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             }
         });
 
-        newButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
-        newButton.setText("Add");
-        newButton.addActionListener(new java.awt.event.ActionListener() {
+        addButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        addButton.setText("Add");
+        addButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newButtonActionPerformed(evt);
+                addButtonActionPerformed(evt);
             }
         });
 
@@ -288,6 +317,15 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             }
         });
 
+        updateButton1.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        updateButton1.setText("Update");
+        updateButton1.setFocusCycleRoot(true);
+        updateButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                updateButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -299,15 +337,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(refreshButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(newButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(deleteButton)
-                                .addGap(18, 18, 18)
-                                .addComponent(addUpdateButton))
                             .addComponent(SearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(20, 20, 20))
                     .addGroup(layout.createSequentialGroup()
@@ -322,7 +351,19 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                         .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(seachProductName)
-                        .addGap(38, 38, 38))))
+                        .addGap(38, 38, 38))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(refreshButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(addButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(deleteButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(editButton)
+                        .addGap(18, 18, 18)
+                        .addComponent(updateButton1)
+                        .addGap(27, 27, 27))))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -344,10 +385,11 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                         .addComponent(SearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(newButton)
+                            .addComponent(addButton)
                             .addComponent(deleteButton)
-                            .addComponent(addUpdateButton)
-                            .addComponent(refreshButton))
+                            .addComponent(editButton)
+                            .addComponent(refreshButton)
+                            .addComponent(updateButton1))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -355,7 +397,14 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    private void connectToDatabase() {
+        try {
+            connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB);
+            System.out.println("Connected to the database");
+        } catch (SQLException e) {
+            System.err.println("Error connecting to the database: " + e.getMessage());
+        }
+    }
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Home h = new Home();
         h.setVisible(true);
@@ -366,20 +415,126 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         
     }//GEN-LAST:event_InventoryButtonMouseClicked
 
-    private void addUpdateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUpdateButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_addUpdateButtonActionPerformed
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        if (productsTable.getSelectedRow() >= 0) {
+            int selectedIndex = productsTable.getSelectedRow();
+            String id = (String) tableModel.getValueAt(selectedIndex, 0);
+            String newName = JOptionPane.showInputDialog(null, "Enter New Name: ");
+            String newBarcode = JOptionPane.showInputDialog(null, "Enter New Barcode: ");
+            int newQuantity = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter New Quantity: "));
+            BigDecimal newPrice = new BigDecimal(JOptionPane.showInputDialog(null, "Enter New Price: "));
 
+            updateItemInDatabase(id, newName, newBarcode, newQuantity, newPrice);
+
+            tableModel.setValueAt(newName, selectedIndex, 1);
+            tableModel.setValueAt(newBarcode, selectedIndex, 2);
+            tableModel.setValueAt(newQuantity, selectedIndex, 3);
+            tableModel.setValueAt(newPrice, selectedIndex, 4);
+
+            JOptionPane.showMessageDialog(null, "Item Updated Successfully!");
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
+    private void updateItemInDatabase(String id, String name, String barcode, int quantity, BigDecimal price) {
+        try {
+            String query = "UPDATE Inventory SET name = ?, barcode = ?, quantity = ?, price = ? WHERE id = ?";
+            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setString(1, name);
+                pstmt.setString(2, barcode);
+                pstmt.setInt(3, quantity);
+                pstmt.setBigDecimal(4, price);
+                pstmt.setInt(5, Integer.parseInt(id));
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating item in the database: " + e.getMessage());
+        }
+    }
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        // TODO add your handling code here:
+        String deletedRow = JOptionPane.showInputDialog("Enter id of item you want to Delete");
+        if (productsTable.getSelectedRow() >= 0) {
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                String id = tableModel.getValueAt(i, 0).toString();
+                if (id.equals(deletedRow)) {
+                    tableModel.removeRow(i);
+                    deleteItemFromDatabase(id);
+                    break;
+                }
+            }
+        }
     }//GEN-LAST:event_deleteButtonActionPerformed
+     private void deleteItemFromDatabase(String id) {
+        try {
+            String query = "DELETE FROM Inventory WHERE id = ?";
+            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setInt(1, Integer.parseInt(id));
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error deleting item from the database: " + e.getMessage());
+        }
+    }
+    private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
+        JTextField nameField = new JTextField();
+        JTextField barcodeField = new JTextField();
+        JTextField quantityField = new JTextField();
+        JTextField priceField = new JTextField();
 
-    private void newButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_newButtonActionPerformed
+        // Create a panel to hold the text fields
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2));
+        inputPanel.add(new JLabel("Name:"));
+        inputPanel.add(nameField);
+        inputPanel.add(new JLabel("Barcode:"));
+        inputPanel.add(barcodeField);
+        inputPanel.add(new JLabel("Quantity:"));
+        inputPanel.add(quantityField);
+        inputPanel.add(new JLabel("Price:"));
+        inputPanel.add(priceField);
 
+        int result = JOptionPane.showConfirmDialog(null, inputPanel, "Enter Item Information", JOptionPane.OK_CANCEL_OPTION);
+
+        if (result == JOptionPane.OK_OPTION) {
+            String name = nameField.getText();
+            String barcode = barcodeField.getText();
+            int quantity = Integer.parseInt(quantityField.getText());
+            BigDecimal price = new BigDecimal(priceField.getText());
+
+            if (name.isEmpty() || barcode.isEmpty() || quantity < 0 || price.compareTo(BigDecimal.ZERO) < 0) {
+                JOptionPane.showMessageDialog(null, "Please enter valid information.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            addRowToDatabase(name, barcode, quantity, price);
+            JOptionPane.showMessageDialog(null, "Item Added Successfully");
+        }
+    }//GEN-LAST:event_addButtonActionPerformed
+    private void addRowToDatabase(String name, String barcode, int quantity, BigDecimal price) {
+        try {
+            String query = "INSERT INTO Inventory (name, barcode, quantity, price) VALUES (?, ?, ?, ?)";
+            try ( PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, name);
+                pstmt.setString(2, barcode);
+                pstmt.setInt(3, quantity);
+                pstmt.setBigDecimal(4, price);
+                pstmt.executeUpdate();
+
+                try ( ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        int generatedId = generatedKeys.getInt(1);
+                        System.out.println("Generated ID: " + generatedId);
+                    } else {
+                        System.err.println("Failed to retrieve generated ID.");
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding row to the database: " + e.getMessage());
+        }
+    }
+     private void addRowToTable(String id, String name, String barcode, String quantity, String price) {
+        tableModel.addRow(new Object[]{id, name, barcode, quantity, price});
+    }
     private void searchbarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbarcodeFieldActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_searchbarcodeFieldActionPerformed
 
     private void searchProductNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchProductNameFieldActionPerformed
@@ -394,6 +549,39 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_refreshButtonActionPerformed
 
+    private void updateButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton1ActionPerformed
+         if (productsTable.getSelectedRow() >= 0) {
+            int selectedIndex = productsTable.getSelectedRow();
+            try {
+                String itemsSoldString = JOptionPane.showInputDialog(null, "Enter number of Items sold");
+                String itemsAddedString = JOptionPane.showInputDialog(null, "Enter number of Items you want to add");
+                int itemsSold = Integer.parseInt(itemsSoldString);
+                int itemsAdded = Integer.parseInt(itemsAddedString);
+                int currentQuantity = (int) tableModel.getValueAt(selectedIndex, 3);
+                int updatedQuantity = currentQuantity + itemsAdded - itemsSold;
+                tableModel.setValueAt(updatedQuantity, selectedIndex, 3);
+
+                String itemId = (String) tableModel.getValueAt(selectedIndex, 0);
+                updateQuantityInDatabase(itemId, updatedQuantity);
+
+                JOptionPane.showMessageDialog(null, "Item Quantity Updated Successfully!");
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Please enter a valid integer for Items sold and Items added.");
+            }
+        }
+    }//GEN-LAST:event_updateButton1ActionPerformed
+    private void updateQuantityInDatabase(String id, int quantity) {
+        try {
+            String query = "UPDATE Inventory SET quantity = ? WHERE id = ?";
+            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setInt(1, quantity);
+                pstmt.setInt(2, Integer.parseInt(id));
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating quantity in the database: " + e.getMessage());
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -438,16 +626,16 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel QuickCartLabel;
     private javax.swing.JPanel SearchPanel;
-    private javax.swing.JButton addUpdateButton;
+    private javax.swing.JButton addButton;
     private javax.swing.JLabel codeLabel;
     private javax.swing.JButton deleteButton;
+    private javax.swing.JButton editButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel nameLabel;
-    private javax.swing.JButton newButton;
     private javax.swing.JLabel priceLabel;
     private javax.swing.JTable productsTable;
     private javax.swing.JLabel quantityLabel;
@@ -459,5 +647,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JTextField searchProductNameField;
     private javax.swing.JLabel searchProductNameLabel;
     private javax.swing.JTextField searchbarcodeField;
+    private javax.swing.JButton updateButton1;
     // End of variables declaration//GEN-END:variables
 }
