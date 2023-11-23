@@ -102,18 +102,18 @@ public class SignIn extends javax.swing.JFrame {
         tfUsername.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         tfUsername.setForeground(new java.awt.Color(153, 153, 153));
         tfUsername.setText("Enter username");
-        tfUsername.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfUsernameActionPerformed(evt);
+        tfUsername.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tfUsernameMouseClicked(evt);
             }
         });
 
         jPassword.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jPassword.setForeground(new java.awt.Color(153, 153, 153));
         jPassword.setText("Enter password");
-        jPassword.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jPasswordActionPerformed(evt);
+        jPassword.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jPasswordMouseClicked(evt);
             }
         });
 
@@ -175,14 +175,6 @@ public class SignIn extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tfUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfUsernameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfUsernameActionPerformed
-
-    private void jPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jPasswordActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jPasswordActionPerformed
-
     private void signInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButtonActionPerformed
         try { Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
@@ -220,11 +212,20 @@ public class SignIn extends javax.swing.JFrame {
     }//GEN-LAST:event_signInButtonActionPerformed
    
     private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
-
         SignUp su = new SignUp();
         su.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_signUpButtonActionPerformed
+
+    private void tfUsernameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tfUsernameMouseClicked
+        tfUsername.setText("");
+        tfUsername.setForeground(Color.BLACK);
+    }//GEN-LAST:event_tfUsernameMouseClicked
+
+    private void jPasswordMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPasswordMouseClicked
+        jPassword.setText("");
+        jPassword.setForeground(Color.BLACK);
+    }//GEN-LAST:event_jPasswordMouseClicked
 
     /**
      * @param args the command line arguments

@@ -180,7 +180,7 @@
         <Property name="text" type="java.lang.String" value="Enter username"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfUsernameActionPerformed"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tfUsernameMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JPasswordField" name="jPassword">
@@ -194,7 +194,7 @@
         <Property name="text" type="java.lang.String" value="Enter password"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jPasswordActionPerformed"/>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPasswordMouseClicked"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="signInButton">
