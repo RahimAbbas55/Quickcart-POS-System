@@ -23,7 +23,6 @@ import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.File;
 import java.io.InputStream;
 import java.net.Socket;
 import java.net.SocketException;
@@ -44,22 +43,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.Timer;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.UndoableEditListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-//import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.Position;
-import javax.swing.text.Segment;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Paragraph;
@@ -71,6 +57,13 @@ import java.io.FileReader;
 import static java.lang.Thread.sleep;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashMap;
+import java.util.Map;
+import com.stripe.Stripe;
+import com.stripe.model.Charge;
 
 public class Cart extends javax.swing.JFrame {
 
@@ -105,7 +98,7 @@ public class Cart extends javax.swing.JFrame {
             return renderer.getQuantity();
         }
     }
-
+    
     public class QuantityRenderer extends DefaultTableCellRenderer {
 
         private JLabel quantityLabel;
@@ -180,9 +173,208 @@ public class Cart extends javax.swing.JFrame {
         }
     }
 
+    public class payment extends JFrame
+    {
+        public payment(float ba)
+        {
+            makePayment(ba);
+        }
+        private void makePayment(float billamt)
+        {
+            float amount = billamt;
+            JTextField email , cardNum , cardHolderName , CVV , expirationMonth , expirationYear;
+            JButton confirm;
+            setTitle("Credit Card Info");
+            setBounds(200 , 200 , 480 , 300);
+
+            System.out.println(amount);
+            //initializing the text fields
+            email = new JTextField(30);
+            cardHolderName = new JTextField(30);
+            cardNum = new JTextField(16);
+            CVV = new JTextField(3);
+            expirationMonth = new JTextField(2);
+            expirationYear = new JTextField(4);
+            confirm = new JButton("Add Card");
+
+            //key listners and action listners for constraints and buttons
+            cardHolderName.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    char c = e.getKeyChar();
+                    if (!Character.isLetter(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE)
+                    {
+                        e.consume();
+                    }
+                }
+                @Override
+                public void keyPressed(KeyEvent e) {}
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            email.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e)
+                {
+                    String currentText = email.getText();
+                    if (currentText.contains("@") && e.getKeyChar() == '@') {
+                        e.consume();
+                    }
+                    if (currentText.contains(".com") && e.getKeyChar() == '.') {
+                        e.consume();
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            cardNum.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) || cardNum.getText().length() >= 16) {
+                        e.consume();
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            CVV.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) || CVV.getText().length() >= 3) {
+                        e.consume();
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            expirationMonth.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) || expirationMonth.getText().length() >= 2 || (Integer.parseInt(expirationMonth.getText() + c) > 12)) {
+                        e.consume();
+                    }
+                }
+
+                @Override
+                public void keyPressed(KeyEvent e) {}
+
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            expirationYear.addKeyListener(new KeyListener()
+            {
+                @Override
+                public void keyTyped(KeyEvent e) {
+                    char c = e.getKeyChar();
+                    if (!Character.isDigit(c) || expirationYear.getText().length() >= 4) {
+                        e.consume();
+                    }
+                }
+                @Override
+                public void keyPressed(KeyEvent e) {}
+                @Override
+                public void keyReleased(KeyEvent e) {}
+            });
+
+            confirm.addActionListener(new ActionListener()
+            {
+                //card number: 42 42 42 42 42 42 42 42
+                //cvv: 123
+                //expiry month: 12  (any future month)
+                //expiry year: 2023 (any future year)
+                @Override
+                public void actionPerformed(ActionEvent e)
+                {
+                    String us = cardHolderName.getText() , em = email.getText() , cn = cardNum.getText() , sec = CVV.getText() , exm = expirationMonth.getText(),
+                            exy = expirationYear.getText();
+                    if (us.isEmpty() || em.isEmpty() || cn.isEmpty() || sec.isEmpty() || exm.isEmpty() || exy.isEmpty()) 
+                    {
+                        JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
+                        return; // Stop further execution if any field is empty
+                    }
+                    try {
+                        Stripe.apiKey = "sk_test_51OG4jYHt3dCnRMr3YvpsxebeSJjmDdziKtFttBJF6sSbCWw8fg5jsmrVhzLWTL4Nqu3MBY7M14oPOAq7lQpaXvh300NLNObiOI";
+                        Map<String , Object> customer = new HashMap<>();
+                        customer.put("Email" , em);
+                        customer.put("Name" , em);
+
+                        Map<String , Object> card = new HashMap<>();
+                        card.put("Number" , cn);
+                        card.put("CVV" , sec);
+                        card.put("expiry_month" , exm);
+                        card.put("expiry_year" , exy);
+
+                        Map<String, Object> chargeParams = new HashMap<String, Object>();
+                        chargeParams.put("amount", amount);   //get amount from parent classes
+                        chargeParams.put("currency", "eur");
+                        chargeParams.put("source", "tok_visa");
+                        chargeParams.put("description", "Testing charge using credit card details");
+                        Charge charge = Charge.create(chargeParams);
+
+
+                        JOptionPane.showMessageDialog(null, "Payment Paid Successfully!", "Success",
+                                JOptionPane.INFORMATION_MESSAGE);
+                        setVisible(false);
+                    }
+                    catch (Exception err)
+                    {
+                        System.out.println(err.getMessage());
+                    }
+                }
+            });
+
+            //Adding the components to a panel
+            JPanel btnPanel = new JPanel(new FlowLayout());
+            JPanel mp = new JPanel(new GridLayout(6 , 2));
+            mp.add(new JLabel("Enter Card Holder's Name:"));
+            mp.add(cardHolderName);
+            mp.add(new JLabel("Enter Email:"));
+            mp.add(email);
+            mp.add(new JLabel("Enter Card Number:"));
+            mp.add(cardNum);
+            mp.add(new JLabel("Enter Security Code:"));
+            mp.add(CVV);
+            mp.add(new JLabel("Enter Expiration Month:"));
+            mp.add(expirationMonth);
+            mp.add(new JLabel("Enter Expiration Year:"));
+            mp.add(expirationYear);
+            btnPanel.add(confirm);
+
+            add(mp);
+            add(btnPanel , BorderLayout.SOUTH);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setVisible(true);
+        }
+    }
     int endRow;
     int actualProdQuantity;
     String payment;
+    float amount = 0.0f;
 
     public Cart() throws InterruptedException, IOException {
         initComponents();
@@ -658,9 +850,22 @@ public class Cart extends javax.swing.JFrame {
     }//GEN-LAST:event_cashPaymentActionPerformed
 
     private void jazzCashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jazzCashPaymentActionPerformed
-        payment = "Payment via Jazz Cash";
+        payment = "Payment via Credit Card";
+        setTotalBill();
+        payment obj = new payment(amount);
     }//GEN-LAST:event_jazzCashPaymentActionPerformed
-
+    private void setTotalBill()
+    {
+        int rowCount = cartTable.getRowCount();
+        System.out.println("Row:" + rowCount);
+        for (int i = 0; i < rowCount; i++) 
+        {
+            float value = (float) cartTable.getValueAt(i, 2);
+            amount += value;
+        }
+    }
+   
+    
     private void showBillDialog(String billContent) {
         JTextArea billTextArea = new JTextArea(billContent);
         JButton printButton = new JButton("Print");
