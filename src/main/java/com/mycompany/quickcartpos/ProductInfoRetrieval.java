@@ -1,46 +1,201 @@
 package com.mycompany.quickcartpos;
 
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.ClearValuesRequest;
+import com.google.api.services.sheets.v4.model.ValueRange;
+import com.google.auth.http.HttpCredentialsAdapter;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.auth.oauth2.ServiceAccountCredentials;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
+import java.security.GeneralSecurityException;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.ERROR_MESSAGE;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
 
-public class ProductInfoRetrieval extends javax.swing.JFrame {
+public final class ProductInfoRetrieval extends javax.swing.JFrame {
+
     private static final String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
     private static final String usernameDB = "root";
     private static final String passwordDB = "root123";
     private Connection connection;
     private DefaultTableModel tableModel;
-    
+
     public ProductInfoRetrieval() {
         initComponents();
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
         connectToDatabase();
-        initTable();
+        tableModel = (DefaultTableModel) productsTable.getModel();
+        deleteSheetData();
+        showProductsTable();
+        fetchSheetData();
     }
-     private void initTable() {
+
+    private void connectToDatabase() {
+        try {
+            connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB);
+            System.out.println("Connected to the database");
+        } catch (SQLException e) {
+            System.err.println("Error connecting to the database: " + e.getMessage());
+        }
+    }
+
+    private void initTable() {
         String[] columnNames = {"ID", "Name", "Barcode", "Quantity", "Price"};
         tableModel = new DefaultTableModel(null, columnNames);
         productsTable = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(productsTable);
         add(scrollPane);
     }
+
+    private void showProductsTable() {
+        tableModel.setRowCount(0);
+        String sql = "SELECT id, name, barcode, quantity, price FROM inventory";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql); ResultSet resultSet = preparedStatement.executeQuery()) {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String barcode = resultSet.getString("barcode");
+                int quantity = resultSet.getInt("quantity");
+                double price = resultSet.getDouble("price");
+                tableModel.addRow(new Object[]{id, name, barcode, quantity, price});
+                //fetchSheetData();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+    int endRow;
+
+    public String fetchSheetData() {
+
+        try {
+            InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
+
+            if (jsonStream != null) {
+                GoogleCredentials credentials = ServiceAccountCredentials.fromStream(jsonStream)
+                        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+                HttpCredentialsAdapter httpCredentialsAdapter = new HttpCredentialsAdapter(credentials);
+                Sheets sheetsService = new Sheets.Builder(
+                        com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
+                        GsonFactory.getDefaultInstance(),
+                        httpCredentialsAdapter)
+                        .setHttpRequestInitializer(httpCredentialsAdapter)
+                        .setApplicationName("QuickCart")
+                        .build();
+                String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
+                String lastRowRange = "B:B";
+                //System.out.println("spreadsheetId = "+spreadsheetId);
+                ValueRange lastRowResponse = sheetsService.spreadsheets().values()
+                        .get(spreadsheetId, lastRowRange)
+                        .execute();
+
+                List<List<Object>> lastRowValues = lastRowResponse.getValues();
+
+                if (lastRowValues != null && !lastRowValues.isEmpty()) {
+                    int lastRow = lastRowValues.size();
+                    System.out.println("End row: " + endRow + " Last row: " + lastRow);
+                    if (endRow > lastRow) {
+                        endRow = lastRow;
+                        return "0";
+                    } else {
+                        String range = "B2";
+                        ValueRange response = sheetsService.spreadsheets().values()
+                                .get(spreadsheetId, range)
+                                .execute();
+
+                        List<List<Object>> values = response.getValues();
+
+                        if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
+                            endRow = lastRow;
+                            searchBarcodeField.setText(values.get(0).get(0).toString());
+                            System.out.println("code: "+searchBarcodeField.getText());
+                            return values.get(0).get(0).toString();
+                        }
+                    }
+                }
+               // fetchSheetData();
+                return "1";
+            } else {
+                System.out.println("Could not load the JSON file.");
+                return "2";
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            //e.printStackTrace();
+            //e.getMessage();
+            return "0";
+        }
+    }
+    public void displayBarcode(){
+        String scannedBarcode = fetchSheetData();
+        System.out.println("Bcode: "+scannedBarcode);
+        /*if (!scannedBarcode.equals("1"))*/{
+        searchBarcodeField.setText("123");}
+    }
+    public void deleteSheetData() {
+        try {
+            InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
+            if (jsonStream != null) {
+                GoogleCredentials credentials = ServiceAccountCredentials.fromStream(jsonStream)
+                        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+                HttpCredentialsAdapter httpCredentialsAdapter = new HttpCredentialsAdapter(credentials);
+                Sheets sheetsService = new Sheets.Builder(
+                        com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
+                        GsonFactory.getDefaultInstance(),
+                        httpCredentialsAdapter)
+                        .setHttpRequestInitializer(httpCredentialsAdapter)
+                        .setApplicationName("QuickCart")
+                        .build();
+                String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
+                String range = "A:Z"; 
+                ClearValuesRequest requestBody = new ClearValuesRequest();
+                sheetsService.spreadsheets().values()
+                        .clear(spreadsheetId, range, requestBody)
+                        .execute();
+                System.out.println("Data deleted successfully.");
+            } else {
+                System.out.println("Could not load the JSON file.");
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -57,7 +212,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         deleteButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
         searchBarcodeLabel = new javax.swing.JLabel();
-        searchbarcodeField = new javax.swing.JTextField();
+        searchBarcodeField = new javax.swing.JTextField();
         searchProductNameLabel = new javax.swing.JLabel();
         searchProductNameField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -71,7 +226,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         quantityLabel = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         priceLabel = new javax.swing.JLabel();
-        seachBarcode = new javax.swing.JButton();
+        searchBarcode = new javax.swing.JButton();
         seachProductName = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
         updateButton1 = new javax.swing.JButton();
@@ -89,16 +244,16 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         AppNamePanelLayout.setHorizontalGroup(
             AppNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AppNamePanelLayout.createSequentialGroup()
-                .addGap(335, 335, 335)
+                .addGap(376, 376, 376)
                 .addComponent(QuickCartLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         AppNamePanelLayout.setVerticalGroup(
             AppNamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AppNamePanelLayout.createSequentialGroup()
-                .addContainerGap(49, Short.MAX_VALUE)
+                .addContainerGap(54, Short.MAX_VALUE)
                 .addComponent(QuickCartLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(45, 45, 45))
+                .addGap(40, 40, 40))
         );
 
         MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
@@ -188,9 +343,9 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         searchBarcodeLabel.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
         searchBarcodeLabel.setText("Search Barcode");
 
-        searchbarcodeField.addActionListener(new java.awt.event.ActionListener() {
+        searchBarcodeField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchbarcodeFieldActionPerformed(evt);
+                searchBarcodeFieldActionPerformed(evt);
             }
         });
 
@@ -203,20 +358,16 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             }
         });
 
-        productsTable.setBackground(new java.awt.Color(239, 225, 239));
         productsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
             },
             new String [] {
-                "Code", "Name", "Quantity", "Price"
+                "ID", "Name", "Barcode", "Quantity", "Price"
             }
         ));
-        productsTable.setSelectionBackground(new java.awt.Color(234, 230, 230));
-        productsTable.setShowGrid(true);
+        productsTable.setSelectionBackground(new java.awt.Color(204, 204, 204));
+        productsTable.setSelectionForeground(new java.awt.Color(51, 0, 51));
+        productsTable.setShowGrid(false);
         jScrollPane1.setViewportView(productsTable);
 
         SearchPanel.setBackground(new java.awt.Color(239, 225, 239));
@@ -226,28 +377,28 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         jLabel1.setText("Code");
 
         codeLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        codeLabel.setText("-");
+        codeLabel.setText(" ");
         codeLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel3.setText("Name");
 
         nameLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        nameLabel.setText("-");
+        nameLabel.setText(" ");
         nameLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Quantity");
 
         quantityLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        quantityLabel.setText("-");
+        quantityLabel.setText(" ");
         quantityLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel7.setText("Price");
 
         priceLabel.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        priceLabel.setText("-");
+        priceLabel.setText(" ");
         priceLabel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         javax.swing.GroupLayout SearchPanelLayout = new javax.swing.GroupLayout(SearchPanel);
@@ -289,14 +440,14 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        seachBarcode.setText("->");
-        seachBarcode.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        seachBarcode.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        seachBarcode.setIconTextGap(0);
-        seachBarcode.setMargin(new java.awt.Insets(2, 5, 3, 5));
-        seachBarcode.addActionListener(new java.awt.event.ActionListener() {
+        searchBarcode.setText("->");
+        searchBarcode.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        searchBarcode.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        searchBarcode.setIconTextGap(0);
+        searchBarcode.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        searchBarcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seachBarcodeActionPerformed(evt);
+                searchBarcodeActionPerformed(evt);
             }
         });
 
@@ -305,6 +456,11 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         seachProductName.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         seachProductName.setIconTextGap(0);
         seachProductName.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        seachProductName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                seachProductNameActionPerformed(evt);
+            }
+        });
 
         refreshButton.setText("O");
         refreshButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -342,9 +498,9 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(searchBarcodeLabel)
                         .addGap(18, 18, 18)
-                        .addComponent(searchbarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(searchBarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(seachBarcode)
+                        .addComponent(searchBarcode)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
                         .addComponent(searchProductNameLabel)
                         .addGap(18, 18, 18)
@@ -376,10 +532,10 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(searchBarcodeLabel)
-                            .addComponent(searchbarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchBarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(searchProductNameLabel)
                             .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(seachBarcode)
+                            .addComponent(searchBarcode)
                             .addComponent(seachProductName))
                         .addGap(10, 10, 10)
                         .addComponent(SearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -397,14 +553,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void connectToDatabase() {
-        try {
-            connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB);
-            System.out.println("Connected to the database");
-        } catch (SQLException e) {
-            System.err.println("Error connecting to the database: " + e.getMessage());
-        }
-    }
+
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
         Home h = new Home();
         h.setVisible(true);
@@ -412,20 +561,20 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
-        
+
     }//GEN-LAST:event_InventoryButtonMouseClicked
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         if (productsTable.getSelectedRow() >= 0) {
             int selectedIndex = productsTable.getSelectedRow();
-            String id = (String) tableModel.getValueAt(selectedIndex, 0);
+            int id = (Integer) tableModel.getValueAt(selectedIndex, 0);
             String newName = JOptionPane.showInputDialog(null, "Enter New Name: ");
             String newBarcode = JOptionPane.showInputDialog(null, "Enter New Barcode: ");
             int newQuantity = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter New Quantity: "));
             BigDecimal newPrice = new BigDecimal(JOptionPane.showInputDialog(null, "Enter New Price: "));
 
             updateItemInDatabase(id, newName, newBarcode, newQuantity, newPrice);
-
+            showProductsTable();
             tableModel.setValueAt(newName, selectedIndex, 1);
             tableModel.setValueAt(newBarcode, selectedIndex, 2);
             tableModel.setValueAt(newQuantity, selectedIndex, 3);
@@ -434,15 +583,15 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Item Updated Successfully!");
         }
     }//GEN-LAST:event_editButtonActionPerformed
-    private void updateItemInDatabase(String id, String name, String barcode, int quantity, BigDecimal price) {
+    private void updateItemInDatabase(int id, String name, String barcode, int quantity, BigDecimal price) {
         try {
             String query = "UPDATE Inventory SET name = ?, barcode = ?, quantity = ?, price = ? WHERE id = ?";
-            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                 pstmt.setString(1, name);
                 pstmt.setString(2, barcode);
                 pstmt.setInt(3, quantity);
                 pstmt.setBigDecimal(4, price);
-                pstmt.setInt(5, Integer.parseInt(id));
+                pstmt.setInt(5, id);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -450,23 +599,22 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         }
     }
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        String deletedRow = JOptionPane.showInputDialog("Enter id of item you want to Delete");
+        int deletedRow = productsTable.getSelectedRow();
+        System.out.println("drow: " + deletedRow);
         if (productsTable.getSelectedRow() >= 0) {
-            for (int i = 0; i < tableModel.getRowCount(); i++) {
-                String id = tableModel.getValueAt(i, 0).toString();
-                if (id.equals(deletedRow)) {
-                    tableModel.removeRow(i);
-                    deleteItemFromDatabase(id);
-                    break;
-                }
-            }
+            int id = (Integer) tableModel.getValueAt(deletedRow, 0);
+            tableModel.removeRow(deletedRow);
+            deleteItemFromDatabase(id);
+            //showProductsTable();
+        } else {
+            JOptionPane.showMessageDialog(null, "Select a row to delete product", "error", ERROR_MESSAGE);
         }
     }//GEN-LAST:event_deleteButtonActionPerformed
-     private void deleteItemFromDatabase(String id) {
+    private void deleteItemFromDatabase(int id) {
         try {
             String query = "DELETE FROM Inventory WHERE id = ?";
-            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
-                pstmt.setInt(1, Integer.parseInt(id));
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setInt(1, id);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -479,7 +627,6 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
         JTextField quantityField = new JTextField();
         JTextField priceField = new JTextField();
 
-        // Create a panel to hold the text fields
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(4, 2));
         inputPanel.add(new JLabel("Name:"));
@@ -504,20 +651,21 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 return;
             }
             addRowToDatabase(name, barcode, quantity, price);
+            showProductsTable();
             JOptionPane.showMessageDialog(null, "Item Added Successfully");
         }
     }//GEN-LAST:event_addButtonActionPerformed
     private void addRowToDatabase(String name, String barcode, int quantity, BigDecimal price) {
         try {
             String query = "INSERT INTO Inventory (name, barcode, quantity, price) VALUES (?, ?, ?, ?)";
-            try ( PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setString(1, name);
                 pstmt.setString(2, barcode);
                 pstmt.setInt(3, quantity);
                 pstmt.setBigDecimal(4, price);
                 pstmt.executeUpdate();
 
-                try ( ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
                         int generatedId = generatedKeys.getInt(1);
                         System.out.println("Generated ID: " + generatedId);
@@ -530,27 +678,51 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             System.err.println("Error adding row to the database: " + e.getMessage());
         }
     }
-     private void addRowToTable(String id, String name, String barcode, String quantity, String price) {
-        tableModel.addRow(new Object[]{id, name, barcode, quantity, price});
-    }
-    private void searchbarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchbarcodeFieldActionPerformed
-        
-    }//GEN-LAST:event_searchbarcodeFieldActionPerformed
+    private void searchBarcodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarcodeFieldActionPerformed
+
+    }//GEN-LAST:event_searchBarcodeFieldActionPerformed
 
     private void searchProductNameFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchProductNameFieldActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_searchProductNameFieldActionPerformed
 
-    private void seachBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachBarcodeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_seachBarcodeActionPerformed
+    private void searchBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarcodeActionPerformed
+        String scannedBarcode = searchBarcodeField.getText();
+        String query = "SELECT * FROM inventory WHERE barcode = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, scannedBarcode);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    codeLabel.setText(resultSet.getString("name"));
+                    nameLabel.setText(resultSet.getString("barcode"));
+                    quantityLabel.setText(resultSet.getString("quantity"));
+                    priceLabel.setText(String.valueOf(resultSet.getDouble("price")));
+                    deleteSheetData();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Product not found.", "Not Found", JOptionPane.INFORMATION_MESSAGE);
+                    codeLabel.setText("");
+                    nameLabel.setText("");
+                    quantityLabel.setText("");
+                    priceLabel.setText("");
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_searchBarcodeActionPerformed
 
     private void refreshButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshButtonActionPerformed
-        // TODO add your handling code here:
+        showProductsTable();
+        codeLabel.setText(" ");
+        nameLabel.setText(" ");
+        quantityLabel.setText(" ");
+        priceLabel.setText(" ");
+        searchBarcodeField.setText("");
+        searchProductNameField.setText("");
     }//GEN-LAST:event_refreshButtonActionPerformed
 
     private void updateButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton1ActionPerformed
-         if (productsTable.getSelectedRow() >= 0) {
+        if (productsTable.getSelectedRow() >= 0) {
             int selectedIndex = productsTable.getSelectedRow();
             try {
                 String itemsSoldString = JOptionPane.showInputDialog(null, "Enter number of Items sold");
@@ -570,10 +742,31 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_updateButton1ActionPerformed
+
+    private void seachProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachProductNameActionPerformed
+        tableModel.setRowCount(0);
+        String query = "SELECT * FROM inventory WHERE name LIKE ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, "%" + searchProductNameField.getText() + "%");
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Object row[] = new Object[6];
+                    row[0] = resultSet.getInt("id");
+                    row[1] = resultSet.getString("name");
+                    row[2] = resultSet.getString("barcode");
+                    row[3] = resultSet.getInt("quantity");
+                    row[4] = resultSet.getDouble("price");
+                    tableModel.addRow(row);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_seachProductNameActionPerformed
     private void updateQuantityInDatabase(String id, int quantity) {
         try {
             String query = "UPDATE Inventory SET quantity = ? WHERE id = ?";
-            try ( PreparedStatement pstmt = connection.prepareStatement(query)) {
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                 pstmt.setInt(1, quantity);
                 pstmt.setInt(2, Integer.parseInt(id));
                 pstmt.executeUpdate();
@@ -582,6 +775,7 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
             System.err.println("Error updating quantity in the database: " + e.getMessage());
         }
     }
+
     /**
      * @param args the command line arguments
      */
@@ -596,24 +790,35 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProductInfoRetrieval.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new ProductInfoRetrieval().setVisible(true);
-            }
+       // ProductInfoRetrieval pir = new ProductInfoRetrieval();
+        java.awt.EventQueue.invokeLater(() -> {
+            new ProductInfoRetrieval().setVisible(true);
+        /*Timer timer = new Timer(10000, e -> {
+                pir.displayBarcode();
+            });
+        timer.start();*/
         });
     }
 
@@ -641,12 +846,12 @@ public class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel quantityLabel;
     private javax.swing.JButton refreshButton;
     private javax.swing.JLabel salesHistoryButton;
-    private javax.swing.JButton seachBarcode;
     private javax.swing.JButton seachProductName;
+    private javax.swing.JButton searchBarcode;
+    private javax.swing.JTextField searchBarcodeField;
     private javax.swing.JLabel searchBarcodeLabel;
     private javax.swing.JTextField searchProductNameField;
     private javax.swing.JLabel searchProductNameLabel;
-    private javax.swing.JTextField searchbarcodeField;
     private javax.swing.JButton updateButton1;
     // End of variables declaration//GEN-END:variables
 }
