@@ -690,7 +690,6 @@ public class Cart extends javax.swing.JFrame {
             Timer timer; // 5000 milliseconds (5 seconds)
             timer = new Timer(5000, e -> {
                 c.updateTable();
-
             });
             timer.start();
         });
