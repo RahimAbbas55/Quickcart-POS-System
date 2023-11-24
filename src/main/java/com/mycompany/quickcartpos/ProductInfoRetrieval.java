@@ -22,7 +22,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import static java.lang.Thread.sleep;
 import java.math.BigDecimal;
+import java.net.Socket;
+import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.sql.Array;
 import java.sql.Connection;
@@ -144,29 +147,21 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                         if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
                             endRow = lastRow;
                             searchBarcodeField.setText(values.get(0).get(0).toString());
-                            System.out.println("code: "+searchBarcodeField.getText());
+                            System.out.println("code: " + searchBarcodeField.getText());
                             return values.get(0).get(0).toString();
                         }
                     }
                 }
-               // fetchSheetData();
                 return "1";
             } else {
                 System.out.println("Could not load the JSON file.");
                 return "2";
             }
         } catch (IOException | GeneralSecurityException e) {
-            //e.printStackTrace();
-            //e.getMessage();
             return "0";
         }
     }
-    public void displayBarcode(){
-        String scannedBarcode = fetchSheetData();
-        System.out.println("Bcode: "+scannedBarcode);
-        /*if (!scannedBarcode.equals("1"))*/{
-        searchBarcodeField.setText("123");}
-    }
+
     public void deleteSheetData() {
         try {
             InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
@@ -182,7 +177,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                         .setApplicationName("QuickCart")
                         .build();
                 String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
-                String range = "A:Z"; 
+                String range = "A:Z";
                 ClearValuesRequest requestBody = new ClearValuesRequest();
                 sheetsService.spreadsheets().values()
                         .clear(spreadsheetId, range, requestBody)
@@ -229,7 +224,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         searchBarcode = new javax.swing.JButton();
         seachProductName = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
-        updateButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -288,6 +282,11 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         CartButton.setText("Cart");
         CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
         MenuPanel.setLayout(MenuPanelLayout);
@@ -473,15 +472,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
             }
         });
 
-        updateButton1.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
-        updateButton1.setText("Update");
-        updateButton1.setFocusCycleRoot(true);
-        updateButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateButton1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -490,11 +480,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(SearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(20, 20, 20))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(searchBarcodeLabel)
                         .addGap(18, 18, 18)
@@ -508,18 +493,20 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(seachProductName)
                         .addGap(38, 38, 38))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(refreshButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(addButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(deleteButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(editButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(updateButton1)
-                        .addGap(27, 27, 27))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(refreshButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(addButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(deleteButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(editButton))
+                            .addComponent(jScrollPane1)
+                            .addComponent(SearchPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(20, 20, 20))))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -544,8 +531,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                             .addComponent(addButton)
                             .addComponent(deleteButton)
                             .addComponent(editButton)
-                            .addComponent(refreshButton)
-                            .addComponent(updateButton1))
+                            .addComponent(refreshButton))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -568,30 +554,62 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         if (productsTable.getSelectedRow() >= 0) {
             int selectedIndex = productsTable.getSelectedRow();
             int id = (Integer) tableModel.getValueAt(selectedIndex, 0);
-            String newName = JOptionPane.showInputDialog(null, "Enter New Name: ");
-            String newBarcode = JOptionPane.showInputDialog(null, "Enter New Barcode: ");
-            int newQuantity = Integer.parseInt(JOptionPane.showInputDialog(null, "Enter New Quantity: "));
-            BigDecimal newPrice = new BigDecimal(JOptionPane.showInputDialog(null, "Enter New Price: "));
+            JTextField nameField = new JTextField();
+            JTextField quantityField = new JTextField();
+            JTextField priceField = new JTextField();
 
-            updateItemInDatabase(id, newName, newBarcode, newQuantity, newPrice);
-            showProductsTable();
-            tableModel.setValueAt(newName, selectedIndex, 1);
-            tableModel.setValueAt(newBarcode, selectedIndex, 2);
-            tableModel.setValueAt(newQuantity, selectedIndex, 3);
-            tableModel.setValueAt(newPrice, selectedIndex, 4);
+            JPanel inputPanel = new JPanel();
+            inputPanel.setLayout(new GridLayout(3, 2));
+            inputPanel.add(new JLabel("Name:"));
+            inputPanel.add(nameField);
+            inputPanel.add(new JLabel("Quantity:"));
+            inputPanel.add(quantityField);
+            inputPanel.add(new JLabel("Price:"));
+            inputPanel.add(priceField);
 
-            JOptionPane.showMessageDialog(null, "Item Updated Successfully!");
+            int result = JOptionPane.showConfirmDialog(null, inputPanel, "Enter Item Information", JOptionPane.OK_CANCEL_OPTION);
+            String newName;
+            int newQuantity;
+            BigDecimal newPrice;
+            if (result == JOptionPane.OK_OPTION) {
+                if (nameField.getText().equals("")) {
+                    newName = (String) tableModel.getValueAt(selectedIndex, 1);
+                } else {
+                    newName = nameField.getText();
+                }
+                if (quantityField.getText().equals("")) {
+                    newQuantity = (int) tableModel.getValueAt(selectedIndex, 3);
+                } else {
+                    newQuantity = Integer.parseInt(quantityField.getText());
+                }
+                if (priceField.getText().equals("")) {
+                    newPrice = new BigDecimal((double) tableModel.getValueAt(selectedIndex, 4));
+                } else {
+                    newPrice = new BigDecimal(priceField.getText());
+                }
+                if (newQuantity < 0 || newPrice.compareTo(BigDecimal.ZERO) < 0) {
+                    JOptionPane.showMessageDialog(null, "Please enter valid information.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                System.out.println("id: " + id + "\nnewName:" + newName + "\nnewQuantity" + newQuantity + "\nnewPrice" + newPrice);
+                updateItemInDatabase(id, newName, newQuantity, newPrice);
+                showProductsTable();
+                JOptionPane.showMessageDialog(null, "Item Updated Successfully!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a row first to edit", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
     }//GEN-LAST:event_editButtonActionPerformed
-    private void updateItemInDatabase(int id, String name, String barcode, int quantity, BigDecimal price) {
+
+    private void updateItemInDatabase(int id, String name, int quantity, BigDecimal price) {
         try {
-            String query = "UPDATE Inventory SET name = ?, barcode = ?, quantity = ?, price = ? WHERE id = ?";
+            String query = "UPDATE Inventory SET name = ?, quantity = ?, price = ? WHERE id = ?";
             try (PreparedStatement pstmt = connection.prepareStatement(query)) {
                 pstmt.setString(1, name);
-                pstmt.setString(2, barcode);
-                pstmt.setInt(3, quantity);
-                pstmt.setBigDecimal(4, price);
-                pstmt.setInt(5, id);
+                pstmt.setInt(2, quantity);
+                pstmt.setBigDecimal(3, price);
+                pstmt.setInt(4, id);
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
@@ -687,24 +705,29 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
     }//GEN-LAST:event_searchProductNameFieldActionPerformed
 
     private void searchBarcodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchBarcodeActionPerformed
-        String scannedBarcode = searchBarcodeField.getText();
+        String scannedBarcode;
+        if (searchBarcodeField.getText().equals("")) {
+            scannedBarcode = fetchSheetData();
+        } else {
+            scannedBarcode = searchBarcodeField.getText();
+        }
         String query = "SELECT * FROM inventory WHERE barcode = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, scannedBarcode);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    codeLabel.setText(resultSet.getString("name"));
-                    nameLabel.setText(resultSet.getString("barcode"));
+                    nameLabel.setText(resultSet.getString("name"));
+                    codeLabel.setText(resultSet.getString("barcode"));
                     quantityLabel.setText(resultSet.getString("quantity"));
                     priceLabel.setText(String.valueOf(resultSet.getDouble("price")));
-                    deleteSheetData();
                 } else {
                     JOptionPane.showMessageDialog(null, "Product not found.", "Not Found", JOptionPane.INFORMATION_MESSAGE);
-                    codeLabel.setText("");
-                    nameLabel.setText("");
-                    quantityLabel.setText("");
-                    priceLabel.setText("");
+                    codeLabel.setText(" ");
+                    nameLabel.setText(" ");
+                    quantityLabel.setText(" ");
+                    priceLabel.setText(" ");
                 }
+                deleteSheetData();
             }
         } catch (SQLException ex) {
             Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
@@ -720,28 +743,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         searchBarcodeField.setText("");
         searchProductNameField.setText("");
     }//GEN-LAST:event_refreshButtonActionPerformed
-
-    private void updateButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateButton1ActionPerformed
-        if (productsTable.getSelectedRow() >= 0) {
-            int selectedIndex = productsTable.getSelectedRow();
-            try {
-                String itemsSoldString = JOptionPane.showInputDialog(null, "Enter number of Items sold");
-                String itemsAddedString = JOptionPane.showInputDialog(null, "Enter number of Items you want to add");
-                int itemsSold = Integer.parseInt(itemsSoldString);
-                int itemsAdded = Integer.parseInt(itemsAddedString);
-                int currentQuantity = (int) tableModel.getValueAt(selectedIndex, 3);
-                int updatedQuantity = currentQuantity + itemsAdded - itemsSold;
-                tableModel.setValueAt(updatedQuantity, selectedIndex, 3);
-
-                String itemId = (String) tableModel.getValueAt(selectedIndex, 0);
-                updateQuantityInDatabase(itemId, updatedQuantity);
-
-                JOptionPane.showMessageDialog(null, "Item Quantity Updated Successfully!");
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(null, "Please enter a valid integer for Items sold and Items added.");
-            }
-        }
-    }//GEN-LAST:event_updateButton1ActionPerformed
 
     private void seachProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachProductNameActionPerformed
         tableModel.setRowCount(0);
@@ -763,6 +764,31 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
             Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_seachProductNameActionPerformed
+
+    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+        try {
+            this.setVisible(false);
+            Cart c = new Cart();
+            Socket socket = new Socket();
+            try {
+                socket.setSoTimeout(300000);
+            } catch (SocketException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            c.setVisible(true);
+            Timer timer;
+            //sleep(10000);
+            timer = new Timer(3000, e -> {
+                c.updateTable();
+            });
+            timer.start();
+            this.dispose();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_CartButtonMouseClicked
     private void updateQuantityInDatabase(String id, int quantity) {
         try {
             String query = "UPDATE Inventory SET quantity = ? WHERE id = ?";
@@ -812,10 +838,10 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-       // ProductInfoRetrieval pir = new ProductInfoRetrieval();
+        // ProductInfoRetrieval pir = new ProductInfoRetrieval();
         java.awt.EventQueue.invokeLater(() -> {
             new ProductInfoRetrieval().setVisible(true);
-        /*Timer timer = new Timer(10000, e -> {
+            /*Timer timer = new Timer(10000, e -> {
                 pir.displayBarcode();
             });
         timer.start();*/
@@ -852,6 +878,5 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel searchBarcodeLabel;
     private javax.swing.JTextField searchProductNameField;
     private javax.swing.JLabel searchProductNameLabel;
-    private javax.swing.JButton updateButton1;
     // End of variables declaration//GEN-END:variables
 }

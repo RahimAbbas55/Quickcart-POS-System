@@ -3,6 +3,7 @@ package com.mycompany.quickcartpos;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.sql.Connection;
@@ -321,24 +322,27 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_LogoutButtonMouseClicked
 
     private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
-        this.dispose();
-        Cart cartPage = new Cart();
-        cartPage.setVisible(true);
-        this.setVisible(false);
-            Cart c = new Cart();
-            Socket socket = new Socket();
-            try {
-                socket.setSoTimeout(300000);
-            } catch (SocketException ex) {
-                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            c.setVisible(true);
-            Timer timer; // 5000 milliseconds (5 seconds)
-            timer = new Timer(5000, e -> {
-                c.updateTable();
-
-            });
-            timer.start();
+            try {                          
+                this.setVisible(false);
+                Cart c = new Cart();
+                Socket socket = new Socket();
+                try {
+                    socket.setSoTimeout(300000);
+                } catch (SocketException ex) {
+                    Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                c.setVisible(true);
+                Timer timer; // 5000 milliseconds (5 seconds)
+                timer = new Timer(3000, e -> {
+                    c.updateTable();
+                });
+                timer.start();              
+                this.dispose();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_CartButtonMouseClicked
     
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
@@ -398,10 +402,8 @@ public class Home extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Home().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Home().setVisible(true);
         });
     }
 

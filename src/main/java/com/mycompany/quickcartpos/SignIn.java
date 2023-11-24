@@ -19,6 +19,7 @@ public class SignIn extends javax.swing.JFrame {
     String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
     String usernameDB = "root";
     String passwordDB = "root123";
+
     public SignIn() {
         initComponents();
         Container con = getContentPane();
@@ -176,11 +177,12 @@ public class SignIn extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void signInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signInButtonActionPerformed
-        try { Class.forName("com.mysql.cj.jdbc.Driver");
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SignIn.class.getName()).log(Level.SEVERE, null, ex);
         }
-  
+
         String enteredUsername = tfUsername.getText();
         String enteredPassword = new String(jPassword.getPassword());
         try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
@@ -191,9 +193,10 @@ public class SignIn extends javax.swing.JFrame {
 
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        Home h = new Home();
                         Home.setLoggedInUsername(enteredUsername);
-                        h.setVisible(true);
+                        this.dispose();
+                        Home hm = new Home();
+                        hm.setVisible(true);
                         setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(null, "Invalid username or password.", "Login Failed", JOptionPane.ERROR_MESSAGE);
@@ -204,13 +207,8 @@ public class SignIn extends javax.swing.JFrame {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error: Unable to connect to the database.", "Connection Error", JOptionPane.ERROR_MESSAGE);
         }
-        this.dispose();
-        Home h = new Home();
-        h.setLoggedInUsername(enteredUsername);
-        h.setVisible(true);
-        setVisible(false);
     }//GEN-LAST:event_signInButtonActionPerformed
-   
+
     private void signUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signUpButtonActionPerformed
         SignUp su = new SignUp();
         su.setVisible(true);
@@ -231,7 +229,7 @@ public class SignIn extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-       
+
         java.awt.EventQueue.invokeLater(() -> {
             new SignIn().setVisible(true);
         });
@@ -246,6 +244,6 @@ public class SignIn extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPassword;
     private javax.swing.JButton signInButton;
     private javax.swing.JButton signUpButton;
-    private javax.swing.JTextField tfUsername;
+    public javax.swing.JTextField tfUsername;
     // End of variables declaration//GEN-END:variables
 }

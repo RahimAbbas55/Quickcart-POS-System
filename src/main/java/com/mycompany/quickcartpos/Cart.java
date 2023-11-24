@@ -15,6 +15,7 @@ import com.google.auth.oauth2.ServiceAccountCredentials;
 import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
+import com.google.api.services.sheets.v4.model.ClearValuesRequest;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Font;
@@ -53,6 +54,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import static java.lang.Thread.sleep;
+import java.util.Enumeration;
+import javax.swing.AbstractButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -372,8 +376,10 @@ public class Cart extends javax.swing.JFrame {
     String payment;
     float amount = 0.0f;
 
-    public Cart() {
+    public Cart() throws InterruptedException, IOException {
         initComponents();
+        deleteSheetData();
+        clearCartFile();
         Container con = getContentPane();
         con.setBackground(Color.white);
         checkDatabaseForBarcode();
@@ -383,6 +389,45 @@ public class Cart extends javax.swing.JFrame {
         paymentButtonGroup.add(jazzCashPayment);
         jazzCashPayment.setBackground(Color.WHITE);
         jazzCashPayment.setOpaque(true);
+    }
+
+    public boolean sheetIsEmpty() {
+        try {
+            String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
+            String range = "A:Z";
+
+            Sheets sheetsService = getSheetsService();
+
+            ValueRange response = sheetsService.spreadsheets().values()
+                    .get(spreadsheetId, range)
+                    .execute();
+
+            List<List<Object>> values = response.getValues();
+
+            return values == null || values.isEmpty();
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private Sheets getSheetsService() throws IOException, GeneralSecurityException {
+        InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
+
+        if (jsonStream != null) {
+            GoogleCredentials credentials = ServiceAccountCredentials.fromStream(jsonStream)
+                    .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+            HttpCredentialsAdapter httpCredentialsAdapter = new HttpCredentialsAdapter(credentials);
+            return new Sheets.Builder(
+                    com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
+                    GsonFactory.getDefaultInstance(),
+                    httpCredentialsAdapter)
+                    .setHttpRequestInitializer(httpCredentialsAdapter)
+                    .setApplicationName("QuickCart")
+                    .build();
+        } else {
+            throw new IOException("Could not load the JSON file.");
+        }
     }
 
     public String fetchSheetData() {
@@ -409,7 +454,9 @@ public class Cart extends javax.swing.JFrame {
                         .execute();
 
                 List<List<Object>> lastRowValues = lastRowResponse.getValues();
-
+                if (sheetIsEmpty()) {
+                    return "0";
+                }
                 if (lastRowValues != null && !lastRowValues.isEmpty()) {
                     int lastRow = lastRowValues.size();
                     System.out.println("End row: " + endRow + " Last row: " + lastRow);
@@ -711,56 +758,71 @@ public class Cart extends javax.swing.JFrame {
         pir.setVisible(true);
         setVisible(false);
     }//GEN-LAST:event_InventoryButtonMouseClicked
+    private boolean isPaymentMethodSelected() {
+        Enumeration<AbstractButton> elements = paymentButtonGroup.getElements();
+        while (elements.hasMoreElements()) {
+            AbstractButton button = elements.nextElement();
+            if (button.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void billButonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_billButonActionPerformed
-        BufferedReader reader = null;
-        try {
-            DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
-            int rowCount = model.getRowCount();
-            double totalAmount = 0.0;
-            Date now = new Date();
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String formattedDateTime = dateFormat.format(now);
-            Home h = new Home();
-            Font f = new Font("Segoe UI", Font.PLAIN, 18);
-            String s = "*************************************************************************************************\n";
-            String d = "--------------------------------------------------------------------------------------------------------------------------\n";
-            StringBuilder billContent = new StringBuilder(s + "\t\t        QUICKCART\n");
-            billContent.append(s).append("\nDate: ").append(formattedDateTime).append("\nPrinted by: ").append(h.name.getText()).append("\n").append(d).append("\nName\t\tQuantity\t\tTotal\n\n");
-            reader = new BufferedReader(new FileReader("C:\\Users\\hp\\Desktop\\cart.txt"));
-            String bcode;
-            //reader.readLine();
-            for (int i = 0; i < rowCount; i++) {
-                String productName = model.getValueAt(i, 0).toString();
-                int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
-                double price = Double.parseDouble(model.getValueAt(i, 2).toString());
-                double itemTotal = quantity * price;
-                bcode = reader.readLine();
-                int actualQuantity = getActualQuantity(bcode);
-                int q = actualQuantity - quantity;
-                System.out.println("q: " + q + " actualQuantity: " + actualQuantity + " quantity: " + quantity);
-                updateQuantityInDB(q, bcode);
-                totalAmount += itemTotal;
-                billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
-                        .append("\t\t Rs.").append(itemTotal).append("\n");
-            }
-            double gst = 0.17 * totalAmount;
-            billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
-            billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append("\n").append(payment);
-            showBillDialog(billContent.toString());
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
+        if (isPaymentMethodSelected()) {
+            BufferedReader reader = null;
             try {
-                reader.close();
+                DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+                int rowCount = model.getRowCount();
+                double totalAmount = 0.0;
+                Date now = new Date();
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDateTime = dateFormat.format(now);
+                Home h = new Home();
+                Font f = new Font("Segoe UI", Font.PLAIN, 18);
+                String s = "*************************************************************************************************\n";
+                String d = "--------------------------------------------------------------------------------------------------------------------------\n";
+                StringBuilder billContent = new StringBuilder(s + "\t\t        QUICKCART\n");
+                billContent.append(s).append("\nDate: ").append(formattedDateTime).append("\nPrinted by: ").append(h.name.getText()).append("\n\n").append(d).append("Name\t\tQuantity\t\tTotal\n\n");
+                reader = new BufferedReader(new FileReader("C:\\Users\\hp\\Desktop\\cart.txt"));
+                String bcode;
+                //reader.readLine();
+                for (int i = 0; i < rowCount; i++) {
+                    String productName = model.getValueAt(i, 0).toString();
+                    int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
+                    double price = Double.parseDouble(model.getValueAt(i, 2).toString());
+                    double itemTotal = quantity * price;
+                    bcode = reader.readLine();
+                    int actualQuantity = getActualQuantity(bcode);
+                    int q = actualQuantity - quantity;
+                    System.out.println("q: " + q + " actualQuantity: " + actualQuantity + " quantity: " + quantity);
+                    updateQuantityInDB(q, bcode);
+                    totalAmount += itemTotal;
+                    billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
+                            .append("\t\t Rs.").append(itemTotal).append("\n");
+                }
+                double gst = 0.17 * totalAmount;
+                billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
+                billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append("\n").append(payment);
+                showBillDialog(billContent.toString());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a payment method", "Payment Method Required", JOptionPane.WARNING_MESSAGE);
         }
 
     }//GEN-LAST:event_billButonActionPerformed
+
     private int getActualQuantity(String barcode) {
         String name;
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
@@ -822,16 +884,61 @@ public class Cart extends javax.swing.JFrame {
     }
 
     private void printToPDF(String textToPrint) {
+            textToPrint = textToPrint.replaceAll("\t\t", " ".repeat(48));
+            textToPrint = textToPrint.replaceAll("\t\t\t\t", " ".repeat(304));
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream("bill.pdf"));
             document.open();
             document.add(new Paragraph(textToPrint));
             document.close();
+            clearCartFile();
+            deleteSheetData();
+            DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+            model.setRowCount(0);
             System.out.println("PDF printed successfully.");
             JOptionPane.showMessageDialog(this, "PDF printed successfully.", "Printed", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException | DocumentException ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public static void clearCartFile() throws IOException {
+        File file = new File("C:\\Users\\hp\\Desktop\\cart.txt");
+        if (!file.exists()) {
+            throw new IOException("File does not exist");
+        }
+        try (FileWriter fileWriter = new FileWriter(file, false)) {
+            fileWriter.write("");
+        }
+    }
+
+    public void deleteSheetData() {
+        try {
+            InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
+            if (jsonStream != null) {
+                GoogleCredentials credentials = ServiceAccountCredentials.fromStream(jsonStream)
+                        .createScoped(Collections.singleton(SheetsScopes.SPREADSHEETS));
+                HttpCredentialsAdapter httpCredentialsAdapter = new HttpCredentialsAdapter(credentials);
+                Sheets sheetsService = new Sheets.Builder(
+                        com.google.api.client.googleapis.javanet.GoogleNetHttpTransport.newTrustedTransport(),
+                        GsonFactory.getDefaultInstance(),
+                        httpCredentialsAdapter)
+                        .setHttpRequestInitializer(httpCredentialsAdapter)
+                        .setApplicationName("QuickCart")
+                        .build();
+                String spreadsheetId = "1MK0dZThaOIboZmmgiHKVRT1RPwIIRAUH-s5QeP0Gx1Q";
+                String range = "A:Z";
+                ClearValuesRequest requestBody = new ClearValuesRequest();
+                sheetsService.spreadsheets().values()
+                        .clear(spreadsheetId, range, requestBody)
+                        .execute();
+                System.out.println("Data deleted successfully.");
+            } else {
+                System.out.println("Could not load the JSON file.");
+            }
+        } catch (IOException | GeneralSecurityException e) {
+            e.printStackTrace();
         }
     }
 
@@ -843,8 +950,6 @@ public class Cart extends javax.swing.JFrame {
             try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
                 preparedStatement.setInt(1, newQuantity);
                 preparedStatement.setString(2, prodBarcode);
-
-                // Execute the update query
                 int rowsUpdated = preparedStatement.executeUpdate();
 
                 if (rowsUpdated > 0) {
@@ -869,34 +974,51 @@ public class Cart extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Cart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Cart.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Cart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Cart.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Cart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Cart.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Cart.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Cart.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            Cart c = new Cart();
-            Socket socket = new Socket();
+            Cart c;
             try {
-                socket.setSoTimeout(300000);
-            } catch (SocketException ex) {
+                c = new Cart();
+
+                Socket socket = new Socket();
+                try {
+                    socket.setSoTimeout(300000);
+                } catch (SocketException ex) {
+                    Logger.getLogger(Cart.class
+                            .getName()).log(Level.SEVERE, null, ex);
+                }
+                c.setVisible(true);
+                Timer timer; // 3000 milliseconds (3 seconds)
+                timer = new Timer(3000, e -> {
+                    c.updateTable();
+                });
+                timer.start();
+
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Cart.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
             }
-            c.setVisible(true);
-            Timer timer; // 5000 milliseconds (5 seconds)
-            timer = new Timer(5000, e -> {
-                c.updateTable();
-            });
-            timer.start();
         });
     }
 
