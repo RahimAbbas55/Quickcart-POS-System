@@ -38,7 +38,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="cashPayment" min="-2" max="-2" attributes="0"/>
-                          <Component id="jazzCashPayment" min="-2" max="-2" attributes="0"/>
+                          <Component id="cardPayment" min="-2" max="-2" attributes="0"/>
                           <Component id="PayementMethod" max="32767" attributes="0"/>
                           <Component id="billButon" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -63,7 +63,7 @@
                               <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
                               <Component id="cashPayment" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jazzCashPayment" min="-2" max="-2" attributes="0"/>
+                              <Component id="cardPayment" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
                               <Component id="billButon" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -267,12 +267,12 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cashPaymentActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JRadioButton" name="jazzCashPayment">
+    <Component class="javax.swing.JRadioButton" name="cardPayment">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Jazz Cash"/>
+        <Property name="text" type="java.lang.String" value="Card"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jazzCashPaymentActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cardPaymentActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="PayementMethod">

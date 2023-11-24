@@ -64,6 +64,7 @@ import java.util.HashMap;
 import java.util.Map;
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
+import java.io.File;
 
 public class Cart extends javax.swing.JFrame {
 
@@ -98,7 +99,7 @@ public class Cart extends javax.swing.JFrame {
             return renderer.getQuantity();
         }
     }
-    
+
     public class QuantityRenderer extends DefaultTableCellRenderer {
 
         private JLabel quantityLabel;
@@ -173,19 +174,18 @@ public class Cart extends javax.swing.JFrame {
         }
     }
 
-    public class payment extends JFrame
-    {
-        public payment(float ba)
-        {
+    public class payment extends JFrame {
+
+        public payment(float ba) {
             makePayment(ba);
         }
-        private void makePayment(float billamt)
-        {
+
+        private void makePayment(float billamt) {
             float amount = billamt;
-            JTextField email , cardNum , cardHolderName , CVV , expirationMonth , expirationYear;
+            JTextField email, cardNum, cardHolderName, CVV, expirationMonth, expirationYear;
             JButton confirm;
             setTitle("Credit Card Info");
-            setBounds(200 , 200 , 480 , 300);
+            setBounds(200, 200, 480, 300);
 
             System.out.println(amount);
             //initializing the text fields
@@ -198,27 +198,27 @@ public class Cart extends javax.swing.JFrame {
             confirm = new JButton("Add Card");
 
             //key listners and action listners for constraints and buttons
-            cardHolderName.addKeyListener(new KeyListener()
-            {
+            cardHolderName.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     char c = e.getKeyChar();
-                    if (!Character.isLetter(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE)
-                    {
+                    if (!Character.isLetter(c) && c != KeyEvent.VK_BACK_SPACE && c != KeyEvent.VK_DELETE) {
                         e.consume();
                     }
                 }
+
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
+
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            email.addKeyListener(new KeyListener()
-            {
+            email.addKeyListener(new KeyListener() {
                 @Override
-                public void keyTyped(KeyEvent e)
-                {
+                public void keyTyped(KeyEvent e) {
                     String currentText = email.getText();
                     if (currentText.contains("@") && e.getKeyChar() == '@') {
                         e.consume();
@@ -229,14 +229,15 @@ public class Cart extends javax.swing.JFrame {
                 }
 
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
 
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            cardNum.addKeyListener(new KeyListener()
-            {
+            cardNum.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     char c = e.getKeyChar();
@@ -246,14 +247,15 @@ public class Cart extends javax.swing.JFrame {
                 }
 
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
 
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            CVV.addKeyListener(new KeyListener()
-            {
+            CVV.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     char c = e.getKeyChar();
@@ -263,14 +265,15 @@ public class Cart extends javax.swing.JFrame {
                 }
 
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
 
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            expirationMonth.addKeyListener(new KeyListener()
-            {
+            expirationMonth.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     char c = e.getKeyChar();
@@ -280,14 +283,15 @@ public class Cart extends javax.swing.JFrame {
                 }
 
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
 
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            expirationYear.addKeyListener(new KeyListener()
-            {
+            expirationYear.addKeyListener(new KeyListener() {
                 @Override
                 public void keyTyped(KeyEvent e) {
                     char c = e.getKeyChar();
@@ -295,54 +299,52 @@ public class Cart extends javax.swing.JFrame {
                         e.consume();
                     }
                 }
+
                 @Override
-                public void keyPressed(KeyEvent e) {}
+                public void keyPressed(KeyEvent e) {
+                }
+
                 @Override
-                public void keyReleased(KeyEvent e) {}
+                public void keyReleased(KeyEvent e) {
+                }
             });
 
-            confirm.addActionListener(new ActionListener()
-            {
+            confirm.addActionListener(new ActionListener() {
                 //card number: 42 42 42 42 42 42 42 42
                 //cvv: 123
                 //expiry month: 12  (any future month)
                 //expiry year: 2023 (any future year)
                 @Override
-                public void actionPerformed(ActionEvent e)
-                {
-                    String us = cardHolderName.getText() , em = email.getText() , cn = cardNum.getText() , sec = CVV.getText() , exm = expirationMonth.getText(),
+                public void actionPerformed(ActionEvent e) {
+                    String us = cardHolderName.getText(), em = email.getText(), cn = cardNum.getText(), sec = CVV.getText(), exm = expirationMonth.getText(),
                             exy = expirationYear.getText();
-                    if (us.isEmpty() || em.isEmpty() || cn.isEmpty() || sec.isEmpty() || exm.isEmpty() || exy.isEmpty()) 
-                    {
+                    if (us.isEmpty() || em.isEmpty() || cn.isEmpty() || sec.isEmpty() || exm.isEmpty() || exy.isEmpty()) {
                         JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
                         return; // Stop further execution if any field is empty
                     }
                     try {
                         Stripe.apiKey = "sk_test_51OG4jYHt3dCnRMr3YvpsxebeSJjmDdziKtFttBJF6sSbCWw8fg5jsmrVhzLWTL4Nqu3MBY7M14oPOAq7lQpaXvh300NLNObiOI";
-                        Map<String , Object> customer = new HashMap<>();
-                        customer.put("Email" , em);
-                        customer.put("Name" , em);
+                        Map<String, Object> customer = new HashMap<>();
+                        customer.put("Email", em);
+                        customer.put("Name", em);
 
-                        Map<String , Object> card = new HashMap<>();
-                        card.put("Number" , cn);
-                        card.put("CVV" , sec);
-                        card.put("expiry_month" , exm);
-                        card.put("expiry_year" , exy);
+                        Map<String, Object> card = new HashMap<>();
+                        card.put("Number", cn);
+                        card.put("CVV", sec);
+                        card.put("expiry_month", exm);
+                        card.put("expiry_year", exy);
 
                         Map<String, Object> chargeParams = new HashMap<String, Object>();
-                        chargeParams.put("amount", amount);   //get amount from parent classes
+                        chargeParams.put("amount", getAmountForCardPayment());
                         chargeParams.put("currency", "eur");
                         chargeParams.put("source", "tok_visa");
                         chargeParams.put("description", "Testing charge using credit card details");
                         Charge charge = Charge.create(chargeParams);
 
-
                         JOptionPane.showMessageDialog(null, "Payment Paid Successfully!", "Success",
                                 JOptionPane.INFORMATION_MESSAGE);
                         setVisible(false);
-                    }
-                    catch (Exception err)
-                    {
+                    } catch (Exception err) {
                         System.out.println(err.getMessage());
                     }
                 }
@@ -350,7 +352,7 @@ public class Cart extends javax.swing.JFrame {
 
             //Adding the components to a panel
             JPanel btnPanel = new JPanel(new FlowLayout());
-            JPanel mp = new JPanel(new GridLayout(6 , 2));
+            JPanel mp = new JPanel(new GridLayout(6, 2));
             mp.add(new JLabel("Enter Card Holder's Name:"));
             mp.add(cardHolderName);
             mp.add(new JLabel("Enter Email:"));
@@ -366,7 +368,7 @@ public class Cart extends javax.swing.JFrame {
             btnPanel.add(confirm);
 
             add(mp);
-            add(btnPanel , BorderLayout.SOUTH);
+            add(btnPanel, BorderLayout.SOUTH);
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             setVisible(true);
         }
@@ -375,6 +377,20 @@ public class Cart extends javax.swing.JFrame {
     int actualProdQuantity;
     String payment;
     float amount = 0.0f;
+
+    public int getAmountForCardPayment() {
+        DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+        int rowCount = model.getRowCount();
+        int totalAmount = 0;
+        for (int i = 0; i < rowCount; i++) {
+            String productName = model.getValueAt(i, 0).toString();
+            int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
+            double price = Double.parseDouble(model.getValueAt(i, 2).toString());
+            double itemTotal = quantity * price;
+            totalAmount += itemTotal;
+        }
+        return totalAmount;
+    }
 
     public Cart() throws InterruptedException, IOException {
         initComponents();
@@ -386,9 +402,9 @@ public class Cart extends javax.swing.JFrame {
         paymentButtonGroup.add(cashPayment);
         cashPayment.setBackground(Color.WHITE);
         cashPayment.setOpaque(true);
-        paymentButtonGroup.add(jazzCashPayment);
-        jazzCashPayment.setBackground(Color.WHITE);
-        jazzCashPayment.setOpaque(true);
+        paymentButtonGroup.add(cardPayment);
+        cardPayment.setBackground(Color.WHITE);
+        cardPayment.setOpaque(true);
     }
 
     public boolean sheetIsEmpty() {
@@ -579,7 +595,7 @@ public class Cart extends javax.swing.JFrame {
         cartTable = new javax.swing.JTable();
         billButon = new javax.swing.JButton();
         cashPayment = new javax.swing.JRadioButton();
-        jazzCashPayment = new javax.swing.JRadioButton();
+        cardPayment = new javax.swing.JRadioButton();
         PayementMethod = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -694,10 +710,10 @@ public class Cart extends javax.swing.JFrame {
             }
         });
 
-        jazzCashPayment.setText("Jazz Cash");
-        jazzCashPayment.addActionListener(new java.awt.event.ActionListener() {
+        cardPayment.setText("Card");
+        cardPayment.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jazzCashPaymentActionPerformed(evt);
+                cardPaymentActionPerformed(evt);
             }
         });
 
@@ -718,7 +734,7 @@ public class Cart extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cashPayment)
-                            .addComponent(jazzCashPayment)
+                            .addComponent(cardPayment)
                             .addComponent(PayementMethod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(billButon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -738,7 +754,7 @@ public class Cart extends javax.swing.JFrame {
                                 .addGap(15, 15, 15)
                                 .addComponent(cashPayment)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jazzCashPayment)
+                                .addComponent(cardPayment)
                                 .addGap(22, 22, 22)
                                 .addComponent(billButon)))
                         .addGap(49, 49, 49))))
@@ -849,23 +865,20 @@ public class Cart extends javax.swing.JFrame {
         payment = "Payment via cash";
     }//GEN-LAST:event_cashPaymentActionPerformed
 
-    private void jazzCashPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jazzCashPaymentActionPerformed
+    private void cardPaymentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cardPaymentActionPerformed
         payment = "Payment via Credit Card";
-        setTotalBill();
+        //setTotalBill();
         payment obj = new payment(amount);
-    }//GEN-LAST:event_jazzCashPaymentActionPerformed
-    private void setTotalBill()
-    {
+    }//GEN-LAST:event_cardPaymentActionPerformed
+    private void setTotalBill() {
         int rowCount = cartTable.getRowCount();
         System.out.println("Row:" + rowCount);
-        for (int i = 0; i < rowCount; i++) 
-        {
+        for (int i = 0; i < rowCount; i++) {
             float value = (float) cartTable.getValueAt(i, 2);
             amount += value;
         }
     }
-   
-    
+
     private void showBillDialog(String billContent) {
         JTextArea billTextArea = new JTextArea(billContent);
         JButton printButton = new JButton("Print");
@@ -884,8 +897,8 @@ public class Cart extends javax.swing.JFrame {
     }
 
     private void printToPDF(String textToPrint) {
-            textToPrint = textToPrint.replaceAll("\t\t", " ".repeat(48));
-            textToPrint = textToPrint.replaceAll("\t\t\t\t", " ".repeat(304));
+        textToPrint = textToPrint.replaceAll("\t\t", " ".repeat(48));
+        textToPrint = textToPrint.replaceAll("\t\t\t\t", " ".repeat(304));
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream("bill.pdf"));
@@ -1032,10 +1045,10 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JLabel PayementMethod;
     private javax.swing.JLabel QuickCartLabel;
     private javax.swing.JButton billButon;
+    private javax.swing.JRadioButton cardPayment;
     private javax.swing.JTable cartTable;
     private javax.swing.JRadioButton cashPayment;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JRadioButton jazzCashPayment;
     private javax.swing.ButtonGroup paymentButtonGroup;
     private javax.swing.JLabel salesHistoryButton;
     // End of variables declaration//GEN-END:variables
