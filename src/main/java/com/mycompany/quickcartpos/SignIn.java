@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 public class SignIn extends javax.swing.JFrame {
@@ -24,6 +25,7 @@ public class SignIn extends javax.swing.JFrame {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
+        setApplicationIcon();
     }
 
     /**
@@ -224,7 +226,15 @@ public class SignIn extends javax.swing.JFrame {
         jPassword.setText("");
         jPassword.setForeground(Color.BLACK);
     }//GEN-LAST:event_jPasswordMouseClicked
-
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * @param args the command line arguments
      */
