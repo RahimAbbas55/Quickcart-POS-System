@@ -65,6 +65,7 @@ import java.util.Map;
 import com.stripe.Stripe;
 import com.stripe.model.Charge;
 import java.io.File;
+import java.sql.Statement;
 
 public class Cart extends javax.swing.JFrame {
 
@@ -309,46 +310,43 @@ public class Cart extends javax.swing.JFrame {
                 }
             });
 
-            confirm.addActionListener(new ActionListener() {
-                //card number: 42 42 42 42 42 42 42 42
-                //cvv: 123
-                //expiry month: 12  (any future month)
-                //expiry year: 2023 (any future year)
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    String us = cardHolderName.getText(), em = email.getText(), cn = cardNum.getText(), sec = CVV.getText(), exm = expirationMonth.getText(),
-                            exy = expirationYear.getText();
-                    if (us.isEmpty() || em.isEmpty() || cn.isEmpty() || sec.isEmpty() || exm.isEmpty() || exy.isEmpty()) {
-                        JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
-                        return; // Stop further execution if any field is empty
-                    }
-                    try {
-                        Stripe.apiKey = "sk_test_51OG4jYHt3dCnRMr3YvpsxebeSJjmDdziKtFttBJF6sSbCWw8fg5jsmrVhzLWTL4Nqu3MBY7M14oPOAq7lQpaXvh300NLNObiOI";
-                        Map<String, Object> customer = new HashMap<>();
-                        customer.put("Email", em);
-                        customer.put("Name", em);
-
-                        Map<String, Object> card = new HashMap<>();
-                        card.put("Number", cn);
-                        card.put("CVV", sec);
-                        card.put("expiry_month", exm);
-                        card.put("expiry_year", exy);
-
-                        Map<String, Object> chargeParams = new HashMap<String, Object>();
-                        chargeParams.put("amount", getAmountForCardPayment());
-                        chargeParams.put("currency", "eur");
-                        chargeParams.put("source", "tok_visa");
-                        chargeParams.put("description", "Testing charge using credit card details");
-                        Charge charge = Charge.create(chargeParams);
-
-                        JOptionPane.showMessageDialog(null, "Payment Paid Successfully!", "Success",
-                                JOptionPane.INFORMATION_MESSAGE);
-                        setVisible(false);
-                    } catch (Exception err) {
-                        System.out.println(err.getMessage());
-                    }
+            confirm.addActionListener((ActionEvent e) -> {
+                String us = cardHolderName.getText(), em = email.getText(), cn = cardNum.getText(), sec = CVV.getText(), exm = expirationMonth.getText(),
+                        exy = expirationYear.getText();
+                if (us.isEmpty() || em.isEmpty() || cn.isEmpty() || sec.isEmpty() || exm.isEmpty() || exy.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all fields.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
+                    return; // Stop further execution if any field is empty
                 }
-            });
+                try {
+                    Stripe.apiKey = "sk_test_51OG4jYHt3dCnRMr3YvpsxebeSJjmDdziKtFttBJF6sSbCWw8fg5jsmrVhzLWTL4Nqu3MBY7M14oPOAq7lQpaXvh300NLNObiOI";
+                    Map<String, Object> customer = new HashMap<>();
+                    customer.put("Email", em);
+                    customer.put("Name", em);
+                    
+                    Map<String, Object> card = new HashMap<>();
+                    card.put("Number", cn);
+                    card.put("CVV", sec);
+                    card.put("expiry_month", exm);
+                    card.put("expiry_year", exy);
+                    
+                    Map<String, Object> chargeParams = new HashMap<String, Object>();
+                    chargeParams.put("amount", getAmountForCardPayment());
+                    chargeParams.put("currency", "eur");
+                    chargeParams.put("source", "tok_visa");
+                    chargeParams.put("description", "Testing charge using credit card details");
+                    Charge charge = Charge.create(chargeParams);
+                    
+                    JOptionPane.showMessageDialog(null, "Payment Paid Successfully!", "Success",
+                            JOptionPane.INFORMATION_MESSAGE);
+                    setVisible(false);
+                } catch (Exception err) {
+                    System.out.println(err.getMessage());
+                }
+            } //card number: 42 42 42 42 42 42 42 42
+            //cvv: 123
+            //expiry month: 12  (any future month)
+            //expiry year: 2023 (any future year)
+            );
 
             //Adding the components to a panel
             JPanel btnPanel = new JPanel(new FlowLayout());
@@ -422,12 +420,12 @@ public class Cart extends javax.swing.JFrame {
 
             return values == null || values.isEmpty();
         } catch (IOException | GeneralSecurityException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return true;
         }
     }
 
-    private Sheets getSheetsService() throws IOException, GeneralSecurityException {
+    private Sheets getSheetsService() throws IOException,GeneralSecurityException {
         InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
 
         if (jsonStream != null) {
@@ -804,6 +802,8 @@ public class Cart extends javax.swing.JFrame {
                 reader = new BufferedReader(new FileReader("C:\\Users\\hp\\Desktop\\cart.txt"));
                 String bcode;
                 //reader.readLine();
+                int orderQuantity=0;
+                
                 for (int i = 0; i < rowCount; i++) {
                     String productName = model.getValueAt(i, 0).toString();
                     int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
@@ -812,16 +812,24 @@ public class Cart extends javax.swing.JFrame {
                     bcode = reader.readLine();
                     int actualQuantity = getActualQuantity(bcode);
                     int q = actualQuantity - quantity;
+                    orderQuantity+=quantity;
                     System.out.println("q: " + q + " actualQuantity: " + actualQuantity + " quantity: " + quantity);
                     updateQuantityInDB(q, bcode);
                     totalAmount += itemTotal;
                     billContent.append(productName).append("\t\t").append(quantity).append(" x Rs.").append(price)
                             .append("\t\t Rs.").append(itemTotal).append("\n");
                 }
-                double gst = 0.17 * totalAmount;
+                double gst;
+                if(cashPayment.isSelected()){
+                gst = 0.17 * totalAmount;
+                totalAmount+=gst;
                 billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
-                billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount + gst).append("\n").append(payment);
+                }
+                else if(cardPayment.isSelected()){
+                }
+                billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount).append("\n").append(payment);
                 showBillDialog(billContent.toString());
+                addOrderToTable(totalAmount,formattedDateTime,orderQuantity);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -838,7 +846,22 @@ public class Cart extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_billButonActionPerformed
-
+    private void addOrderToTable(double totalAmount,String DateTime,int quantity){
+        Home home=new Home();
+        
+        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
+            String query = "INSERT INTO orders (seller, amount,products,datetime ) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                pstmt.setString(1, home.name.getText());
+                pstmt.setDouble(2, totalAmount);
+                pstmt.setInt(3, quantity);
+                pstmt.setString(4, DateTime);
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            System.err.println("Error adding row to the database: " + e.getMessage());
+        }
+    }
     private int getActualQuantity(String barcode) {
         String name;
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
@@ -917,13 +940,16 @@ public class Cart extends javax.swing.JFrame {
     }
 
     public static void clearCartFile() throws IOException {
+        
         File file = new File("C:\\Users\\hp\\Desktop\\cart.txt");
         if (!file.exists()) {
             throw new IOException("File does not exist");
         }
         try (FileWriter fileWriter = new FileWriter(file, false)) {
             fileWriter.write("");
+            System.out.println("clear file");
         }
+        
     }
 
     public void deleteSheetData() {
@@ -951,7 +977,7 @@ public class Cart extends javax.swing.JFrame {
                 System.out.println("Could not load the JSON file.");
             }
         } catch (IOException | GeneralSecurityException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -1012,13 +1038,13 @@ public class Cart extends javax.swing.JFrame {
             try {
                 c = new Cart();
 
-                Socket socket = new Socket();
+                /*Socket socket = new Socket();
                 try {
                     socket.setSoTimeout(300000);
                 } catch (SocketException ex) {
                     Logger.getLogger(Cart.class
                             .getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
                 c.setVisible(true);
                 Timer timer; // 3000 milliseconds (3 seconds)
                 timer = new Timer(3000, e -> {

@@ -187,7 +187,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 System.out.println("Could not load the JSON file.");
             }
         } catch (IOException | GeneralSecurityException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 
@@ -769,12 +769,12 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         try {
             this.setVisible(false);
             Cart c = new Cart();
-            Socket socket = new Socket();
+            /*Socket socket = new Socket();
             try {
                 socket.setSoTimeout(300000);
             } catch (SocketException ex) {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }*/
             c.setVisible(true);
             Timer timer;
             //sleep(10000);

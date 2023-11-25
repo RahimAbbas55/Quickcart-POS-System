@@ -116,6 +116,11 @@ public class Home extends javax.swing.JFrame {
         OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         OrdersButton.setText("Orders");
         OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        OrdersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OrdersButtonMouseClicked(evt);
+            }
+        });
 
         CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         CartButton.setText("Cart");
@@ -325,12 +330,12 @@ public class Home extends javax.swing.JFrame {
             try {                          
                 this.setVisible(false);
                 Cart c = new Cart();
-                Socket socket = new Socket();
+                /*Socket socket = new Socket();
                 try {
                     socket.setSoTimeout(300000);
                 } catch (SocketException ex) {
                     Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                }*/
                 c.setVisible(true);
                 Timer timer; // 5000 milliseconds (5 seconds)
                 timer = new Timer(3000, e -> {
@@ -344,6 +349,14 @@ public class Home extends javax.swing.JFrame {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_CartButtonMouseClicked
+
+    private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
+        // TODO add your handling code here:
+        //this.setVisible(false);
+        this.dispose();
+        orders o=new orders();
+        o.setVisible(true);
+    }//GEN-LAST:event_OrdersButtonMouseClicked
     
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
