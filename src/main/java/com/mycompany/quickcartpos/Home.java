@@ -354,7 +354,7 @@ public class Home extends javax.swing.JFrame {
         // TODO add your handling code here:
         //this.setVisible(false);
         this.dispose();
-        orders o=new orders();
+        Orders o=new Orders();
         o.setVisible(true);
     }//GEN-LAST:event_OrdersButtonMouseClicked
     

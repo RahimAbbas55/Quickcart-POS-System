@@ -12,6 +12,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 public class SignIn extends javax.swing.JFrame {
@@ -24,6 +25,8 @@ public class SignIn extends javax.swing.JFrame {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
+        ImageIcon icon = new ImageIcon("/images/cart.png");
+        this.setIconImage(icon.getImage());
     }
 
     /**
@@ -46,6 +49,7 @@ public class SignIn extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImages(null);
 
         jPanel1.setBackground(new java.awt.Color(174, 102, 183));
 
