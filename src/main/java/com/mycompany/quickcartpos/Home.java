@@ -66,6 +66,11 @@ public class Home extends javax.swing.JFrame {
         setBackground(new java.awt.Color(255, 255, 255));
 
         AppNamePanel.setBackground(new java.awt.Color(174, 102, 183));
+        AppNamePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AppNamePanelMouseClicked(evt);
+            }
+        });
 
         QuickCartLabel.setFont(new java.awt.Font("Stencil", 0, 48)); // NOI18N
         QuickCartLabel.setForeground(new java.awt.Color(255, 255, 255));
@@ -89,6 +94,11 @@ public class Home extends javax.swing.JFrame {
         );
 
         MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
+        MenuPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AppNamePanelMouseClicked(evt);
+            }
+        });
 
         HomeButton.setBackground(new java.awt.Color(255, 255, 255));
         HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -112,6 +122,11 @@ public class Home extends javax.swing.JFrame {
         salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         salesHistoryButton.setText("Sales History");
         salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        salesHistoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salesHistoryButtonMouseClicked(evt);
+            }
+        });
 
         OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         OrdersButton.setText("Orders");
@@ -354,9 +369,20 @@ public class Home extends javax.swing.JFrame {
         // TODO add your handling code here:
         //this.setVisible(false);
         this.dispose();
-        orders o=new orders();
+        Orders o=new Orders();
         o.setVisible(true);
     }//GEN-LAST:event_OrdersButtonMouseClicked
+
+    private void AppNamePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AppNamePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_AppNamePanelMouseClicked
+
+    private void salesHistoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salesHistoryButtonMouseClicked
+        // TODO add your handling code here:
+        this.setVisible(false);
+        SalesHistory sh=new SalesHistory();
+        sh.setVisible(true);
+    }//GEN-LAST:event_salesHistoryButtonMouseClicked
     
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
