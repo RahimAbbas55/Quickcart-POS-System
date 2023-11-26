@@ -53,6 +53,16 @@ public class SalesHistory extends javax.swing.JFrame {
         int labelHeight = imageLabel.getHeight();
         Image resizedImage = imageIcon.getImage().getScaledInstance(labelWidth, labelHeight, Image.SCALE_SMOOTH);
         imageLabel.setIcon(new ImageIcon(resizedImage));
+        setApplicationIcon();
+    }
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -66,18 +76,18 @@ public class SalesHistory extends javax.swing.JFrame {
 
         AppNamePanel = new javax.swing.JPanel();
         QuickCartLabel = new javax.swing.JLabel();
-        MenuPanel = new javax.swing.JPanel();
-        HomeButton = new javax.swing.JLabel();
-        InventoryButton = new javax.swing.JLabel();
-        salesHistoryButton = new javax.swing.JLabel();
-        OrdersButton = new javax.swing.JLabel();
-        CartButton = new javax.swing.JLabel();
-        LogoutButton = new javax.swing.JLabel();
         allMonthlySales = new javax.swing.JButton();
         adminMonthlySales = new javax.swing.JButton();
         dailySales = new javax.swing.JButton();
         adminDailySales = new javax.swing.JButton();
         imageLabel = new javax.swing.JLabel();
+        MenuPanel2 = new javax.swing.JPanel();
+        HomeButton2 = new javax.swing.JLabel();
+        InventoryButton = new javax.swing.JLabel();
+        salesHistoryButton = new javax.swing.JLabel();
+        OrdersButton = new javax.swing.JLabel();
+        CartButton = new javax.swing.JLabel();
+        LogoutButton = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sales History");
@@ -103,87 +113,6 @@ public class SalesHistory extends javax.swing.JFrame {
                 .addContainerGap(49, Short.MAX_VALUE)
                 .addComponent(QuickCartLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(45, 45, 45))
-        );
-
-        MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
-
-        HomeButton.setBackground(new java.awt.Color(255, 255, 255));
-        HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        HomeButton.setText("Home");
-        HomeButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        HomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                HomeButtonMouseClicked(evt);
-            }
-        });
-
-        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        InventoryButton.setText("Inventory");
-        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                InventoryButtonMouseClicked(evt);
-            }
-        });
-
-        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        salesHistoryButton.setText("Sales History");
-        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        OrdersButton.setText("Orders");
-        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        OrdersButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                OrdersButtonMouseClicked(evt);
-            }
-        });
-
-        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CartButton.setText("Cart");
-        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CartButtonMouseClicked(evt);
-            }
-        });
-
-        LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        LogoutButton.setText("Logout");
-        LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        LogoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                LogoutButtonMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
-        MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(266, Short.MAX_VALUE))
         );
 
         allMonthlySales.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -221,6 +150,97 @@ public class SalesHistory extends javax.swing.JFrame {
         imageLabel.setText(" ");
         imageLabel.setPreferredSize(new java.awt.Dimension(300, 300));
 
+        MenuPanel2.setBackground(new java.awt.Color(213, 190, 216));
+        MenuPanel2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuPanel2AppNamePanelMouseClicked(evt);
+            }
+        });
+
+        HomeButton2.setBackground(new java.awt.Color(255, 255, 255));
+        HomeButton2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        HomeButton2.setText("Home");
+        HomeButton2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        HomeButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                HomeButton2MouseClicked(evt);
+            }
+        });
+
+        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        InventoryButton.setText("Inventory");
+        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                InventoryButtonMouseClicked(evt);
+            }
+        });
+
+        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        salesHistoryButton.setText("Sales History");
+        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        salesHistoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salesHistoryButtonMouseClicked(evt);
+            }
+        });
+
+        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        OrdersButton.setText("Orders");
+        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        OrdersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OrdersButtonMouseClicked(evt);
+            }
+        });
+
+        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CartButton.setText("Cart");
+        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
+
+        LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LogoutButton.setText("Logout");
+        LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        LogoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LogoutButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MenuPanel2Layout = new javax.swing.GroupLayout(MenuPanel2);
+        MenuPanel2.setLayout(MenuPanel2Layout);
+        MenuPanel2Layout.setHorizontalGroup(
+            MenuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HomeButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        MenuPanel2Layout.setVerticalGroup(
+            MenuPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(HomeButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(266, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -229,7 +249,7 @@ public class SalesHistory extends javax.swing.JFrame {
                 .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 1, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(MenuPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(77, 77, 77)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(allMonthlySales, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -245,7 +265,6 @@ public class SalesHistory extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -260,59 +279,15 @@ public class SalesHistory extends javax.swing.JFrame {
                                 .addComponent(dailySales)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(adminDailySales)))
-                        .addContainerGap())))
+                        .addGap(0, 80, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, 0)
+                        .addComponent(MenuPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(0, 0, 0))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-
-    }//GEN-LAST:event_HomeButtonMouseClicked
-
-    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
-        ProductInfoRetrieval pir = new ProductInfoRetrieval();
-        pir.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_InventoryButtonMouseClicked
-
-    private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
-        // TODO add your handling code here:
-        //this.setVisible(false);
-        this.dispose();
-        orders o = new orders();
-        o.setVisible(true);
-    }//GEN-LAST:event_OrdersButtonMouseClicked
-
-    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
-        try {
-            this.setVisible(false);
-            Cart c = new Cart();
-            /*Socket socket = new Socket();
-            try {
-                socket.setSoTimeout(300000);
-            } catch (SocketException ex) {
-                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
-            }*/
-            c.setVisible(true);
-            Timer timer; // 5000 milliseconds (5 seconds)
-            timer = new Timer(3000, e -> {
-                c.updateTable();
-            });
-            timer.start();
-            this.dispose();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_CartButtonMouseClicked
-
-    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogoutButtonMouseClicked
-        SignIn signInPage = new SignIn();
-        signInPage.setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_LogoutButtonMouseClicked
 
     private void adminMonthlySalesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adminMonthlySalesActionPerformed
         // TODO add your handling code here:
@@ -334,10 +309,66 @@ public class SalesHistory extends javax.swing.JFrame {
         // TODO add your handling code here:
         openAdminDailyBarGraphFrame();
     }//GEN-LAST:event_adminDailySalesActionPerformed
+
+    private void HomeButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButton2MouseClicked
+        Home hm = new Home();
+        hm.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_HomeButton2MouseClicked
+
+    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
+        ProductInfoRetrieval pir = new ProductInfoRetrieval();
+        pir.setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_InventoryButtonMouseClicked
+
+    private void salesHistoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salesHistoryButtonMouseClicked
+
+    }//GEN-LAST:event_salesHistoryButtonMouseClicked
+
+    private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
+        orders o = new orders();
+        o.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_OrdersButtonMouseClicked
+
+    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+        try {
+            Cart c = new Cart();
+            /*Socket socket = new Socket();
+            try {
+                socket.setSoTimeout(300000);
+            } catch (SocketException ex) {
+                Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+            }*/
+            c.setVisible(true);
+            this.setVisible(false);
+            Timer timer; // 5000 milliseconds (5 seconds)
+            timer = new Timer(3000, e -> {
+                c.updateTable();
+            });
+            timer.start();
+            //this.dispose();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_CartButtonMouseClicked
+
+    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogoutButtonMouseClicked
+        SignIn signInPage = new SignIn();
+        signInPage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_LogoutButtonMouseClicked
+
+    private void MenuPanel2AppNamePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuPanel2AppNamePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuPanel2AppNamePanelMouseClicked
     private void openAdminDailyBarGraphFrame() {
         JFrame barGraphFrame = new JFrame("Sellers Orders Bar Graph");
         barGraphFrame.setSize(800, 600);
-         LocalDateTime currentDate = LocalDateTime.now();
+        LocalDateTime currentDate = LocalDateTime.now();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd MMMM");
         DefaultCategoryDataset dataset = createAdminDailyDataset();
         String chartTitle = "Orders Count for Sellers (" + currentDate.format(dateFormatter) + ")";
@@ -351,19 +382,21 @@ public class SalesHistory extends javax.swing.JFrame {
         plot.setBackgroundPaint(Color.WHITE);
 
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        renderer.setMaximumBarWidth(0.05);
         setUniqueColors(renderer);
-        renderer.setItemMargin(0.2);
-        renderer.setMaximumBarWidth(0.2);
+        //renderer.setSeriesPaint(0, new Color(210, 180, 222));
         ChartPanel chartPanel = new ChartPanel(barChart);
         barGraphFrame.add(chartPanel);
 
         barGraphFrame.setLocationRelativeTo(null);
         barGraphFrame.setVisible(true);
     }
+
     private void setUniqueColors(BarRenderer renderer) {
         ArrayList<Color> colors = generateUniqueColors();
         for (int i = 0; i < colors.size(); i++) {
             renderer.setSeriesPaint(i, colors.get(i));
+            renderer.setMaximumBarWidth(0.05);
         }
     }
 
@@ -389,11 +422,11 @@ public class SalesHistory extends javax.swing.JFrame {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, currentDate.format(formatter));
             ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            String seller = resultSet.getString("seller");
-            int ordersCount = resultSet.getInt("orders_count");
-            dataset.addValue(ordersCount, seller, seller);
-        }
+            while (resultSet.next()) {
+                String seller = resultSet.getString("seller");
+                int ordersCount = resultSet.getInt("orders_count");
+                dataset.addValue(ordersCount, seller, seller);
+            }
             resultSet.close();
             preparedStatement.close();
             connection.close();
@@ -418,9 +451,9 @@ public class SalesHistory extends javax.swing.JFrame {
         CategoryPlot plot = (CategoryPlot) barChart.getPlot();
         plot.setBackgroundPaint(Color.WHITE);
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
-        setUniqueColors(renderer);
+        //setUniqueColors(renderer);
         renderer.setSeriesPaint(0, new Color(210, 180, 222));
-        renderer.setMaximumBarWidth(0.05); 
+        renderer.setMaximumBarWidth(0.05);
         ChartPanel chartPanel = new ChartPanel(barChart);
         barGraphFrame.add(chartPanel);
         barGraphFrame.setLocationRelativeTo(null);
@@ -603,9 +636,13 @@ public class SalesHistory extends javax.swing.JFrame {
     private javax.swing.JPanel AppNamePanel;
     private javax.swing.JLabel CartButton;
     private javax.swing.JLabel HomeButton;
+    private javax.swing.JLabel HomeButton1;
+    private javax.swing.JLabel HomeButton2;
     private javax.swing.JLabel InventoryButton;
     private javax.swing.JLabel LogoutButton;
     private javax.swing.JPanel MenuPanel;
+    private javax.swing.JPanel MenuPanel1;
+    private javax.swing.JPanel MenuPanel2;
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel QuickCartLabel;
     private javax.swing.JButton adminDailySales;

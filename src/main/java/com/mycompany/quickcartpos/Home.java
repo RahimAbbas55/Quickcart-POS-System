@@ -13,19 +13,34 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 public class Home extends javax.swing.JFrame {
+
     public static String loggedInUsername;
+
     public Home() {
         initComponents();
         Container con = getContentPane();
         getContentPane().setBackground(Color.white);
         fetchAndDisplayAdminInfo(loggedInUsername);
+        setApplicationIcon();
     }
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public static void setLoggedInUsername(String username) {
         loggedInUsername = username;
     }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -324,9 +339,9 @@ public class Home extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-        
+
     }//GEN-LAST:event_HomeButtonMouseClicked
 
     private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
@@ -342,35 +357,33 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_LogoutButtonMouseClicked
 
     private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
-            try {                          
-                this.setVisible(false);
-                Cart c = new Cart();
-                /*Socket socket = new Socket();
+        try {
+            Cart c = new Cart();
+            /*Socket socket = new Socket();
                 try {
                     socket.setSoTimeout(300000);
                 } catch (SocketException ex) {
                     Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
                 }*/
-                c.setVisible(true);
-                Timer timer; // 5000 milliseconds (5 seconds)
-                timer = new Timer(3000, e -> {
-                    c.updateTable();
-                });
-                timer.start();              
-                this.dispose();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
+            c.setVisible(true);
+            this.setVisible(false);
+            Timer timer; // 5000 milliseconds (5 seconds)
+            timer = new Timer(3000, e -> {
+                c.updateTable();
+            });
+            timer.start();
+            //this.dispose();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_CartButtonMouseClicked
 
     private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
-        // TODO add your handling code here:
-        //this.setVisible(false);
-        this.dispose();
-        orders o=new orders();
+        orders o = new orders();
         o.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_OrdersButtonMouseClicked
 
     private void AppNamePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_AppNamePanelMouseClicked
@@ -379,11 +392,11 @@ public class Home extends javax.swing.JFrame {
 
     private void salesHistoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salesHistoryButtonMouseClicked
         // TODO add your handling code here:
-        this.setVisible(false);
-        SalesHistory sh=new SalesHistory();
+        SalesHistory sh = new SalesHistory();
         sh.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_salesHistoryButtonMouseClicked
-    
+
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
         String usernameDB = "root";
@@ -409,14 +422,15 @@ public class Home extends javax.swing.JFrame {
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();   
+            ex.printStackTrace();
         }
     }
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        
+
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

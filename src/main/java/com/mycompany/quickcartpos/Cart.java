@@ -24,8 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
-import java.net.SocketException;
 import java.security.GeneralSecurityException;
 import java.util.Date;
 import java.sql.SQLException;
@@ -54,7 +52,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
-import static java.lang.Thread.sleep;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.*;
@@ -66,6 +63,10 @@ import com.stripe.Stripe;
 import com.stripe.model.Charge;
 import java.io.File;
 import java.sql.Statement;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.util.Properties;
 
 public class Cart extends javax.swing.JFrame {
 
@@ -322,20 +323,20 @@ public class Cart extends javax.swing.JFrame {
                     Map<String, Object> customer = new HashMap<>();
                     customer.put("Email", em);
                     customer.put("Name", em);
-                    
+
                     Map<String, Object> card = new HashMap<>();
                     card.put("Number", cn);
                     card.put("CVV", sec);
                     card.put("expiry_month", exm);
                     card.put("expiry_year", exy);
-                    
+
                     Map<String, Object> chargeParams = new HashMap<String, Object>();
                     chargeParams.put("amount", getAmountForCardPayment());
                     chargeParams.put("currency", "eur");
                     chargeParams.put("source", "tok_visa");
                     chargeParams.put("description", "Testing charge using credit card details");
                     Charge charge = Charge.create(chargeParams);
-                    
+                    sendDummyEmail(us, em, getAmountForCardPayment());
                     JOptionPane.showMessageDialog(null, "Payment Paid Successfully!", "Success",
                             JOptionPane.INFORMATION_MESSAGE);
                     setVisible(false);
@@ -370,6 +371,39 @@ public class Cart extends javax.swing.JFrame {
             setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             setVisible(true);
         }
+
+        private void sendDummyEmail(String user, String recipientEmail, int amount) {
+            String username = "tahoorasma9@gmail.com"; // Your Gmail username
+            String password = "hwzl gthi srhu mnof"; // Your Gmail password
+
+            Properties props = new Properties();
+            props.put("mail.smtp.auth", "true");
+            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+
+            Session session = Session.getInstance(props,
+                    new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(username, password);
+                }
+            });
+
+            try {
+                Message message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(username));
+                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipientEmail));
+                message.setSubject("Payment Confirmation");
+                message.setText("Dear " + user + ",\n\nYour payment of Rs." + amount + " has been successfully processed. Thank you for your purchase!\n-QUICK CART");
+
+                Transport.send(message);
+
+                System.out.println("Email sent successfully.");
+
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
     int endRow;
     int actualProdQuantity;
@@ -395,6 +429,7 @@ public class Cart extends javax.swing.JFrame {
         deleteSheetData();
         clearCartFile();
         Container con = getContentPane();
+        setApplicationIcon();
         con.setBackground(Color.white);
         checkDatabaseForBarcode();
         paymentButtonGroup.add(cashPayment);
@@ -403,6 +438,16 @@ public class Cart extends javax.swing.JFrame {
         paymentButtonGroup.add(cardPayment);
         cardPayment.setBackground(Color.WHITE);
         cardPayment.setOpaque(true);
+    }
+
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean sheetIsEmpty() {
@@ -425,7 +470,7 @@ public class Cart extends javax.swing.JFrame {
         }
     }
 
-    private Sheets getSheetsService() throws IOException,GeneralSecurityException {
+    private Sheets getSheetsService() throws IOException, GeneralSecurityException {
         InputStream jsonStream = getClass().getResourceAsStream("/zeta-tracer-405617-26cc2165ac80.json");
 
         if (jsonStream != null) {
@@ -484,7 +529,9 @@ public class Cart extends javax.swing.JFrame {
                                 .execute();
 
                         List<List<Object>> values = response.getValues();
-
+                        if (range.equals("B2") && values == null) {
+                            return "0";
+                        }
                         if (values != null && !values.isEmpty() && values.get(0) != null && !values.get(0).isEmpty()) {
                             endRow = lastRow;
                             return values.get(0).get(0).toString();
@@ -492,7 +539,7 @@ public class Cart extends javax.swing.JFrame {
 
                     }
                 }
-                return "1";
+                return "0";
             } else {
                 System.out.println("Could not load the JSON file.");
                 return "2";
@@ -583,18 +630,20 @@ public class Cart extends javax.swing.JFrame {
         paymentButtonGroup = new javax.swing.ButtonGroup();
         AppNamePanel = new javax.swing.JPanel();
         QuickCartLabel = new javax.swing.JLabel();
-        MenuPanel = new javax.swing.JPanel();
-        HomeButton = new javax.swing.JLabel();
-        InventoryButton = new javax.swing.JLabel();
-        salesHistoryButton = new javax.swing.JLabel();
-        OrdersButton = new javax.swing.JLabel();
-        CartButton = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         cartTable = new javax.swing.JTable();
         billButon = new javax.swing.JButton();
         cashPayment = new javax.swing.JRadioButton();
         cardPayment = new javax.swing.JRadioButton();
         PayementMethod = new javax.swing.JLabel();
+        MenuPanel = new javax.swing.JPanel();
+        HomeButton = new javax.swing.JLabel();
+        InventoryButton = new javax.swing.JLabel();
+        salesHistoryButton = new javax.swing.JLabel();
+        OrdersButton = new javax.swing.JLabel();
+        CartButton = new javax.swing.JLabel();
+        LogoutButton = new javax.swing.JLabel();
+        clearCart = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Cart");
@@ -622,65 +671,6 @@ public class Cart extends javax.swing.JFrame {
                 .addGap(45, 45, 45))
         );
 
-        MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
-
-        HomeButton.setBackground(new java.awt.Color(255, 255, 255));
-        HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        HomeButton.setText("Home");
-        HomeButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        HomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                HomeButtonMouseClicked(evt);
-            }
-        });
-
-        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        InventoryButton.setText("Inventory");
-        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                InventoryButtonMouseClicked(evt);
-            }
-        });
-
-        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        salesHistoryButton.setText("Sales History");
-        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        OrdersButton.setText("Orders");
-        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CartButton.setText("Cart");
-        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
-        MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         cartTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
             },
@@ -694,7 +684,7 @@ public class Cart extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(cartTable);
 
-        billButon.setText("Generate Bill");
+        billButon.setText("Print Receipt");
         billButon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 billButonActionPerformed(evt);
@@ -718,6 +708,104 @@ public class Cart extends javax.swing.JFrame {
         PayementMethod.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         PayementMethod.setText("Payment Method");
 
+        MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
+        MenuPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuPanelAppNamePanelMouseClicked(evt);
+            }
+        });
+
+        HomeButton.setBackground(new java.awt.Color(255, 255, 255));
+        HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        HomeButton.setText("Home");
+        HomeButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        HomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                HomeButtonMouseClicked(evt);
+            }
+        });
+
+        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        InventoryButton.setText("Inventory");
+        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                InventoryButtonMouseClicked(evt);
+            }
+        });
+
+        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        salesHistoryButton.setText("Sales History");
+        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        salesHistoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salesHistoryButtonMouseClicked(evt);
+            }
+        });
+
+        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        OrdersButton.setText("Orders");
+        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        OrdersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OrdersButtonMouseClicked(evt);
+            }
+        });
+
+        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CartButton.setText("Cart");
+        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
+
+        LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LogoutButton.setText("Logout");
+        LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        LogoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LogoutButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
+        MenuPanel.setLayout(MenuPanelLayout);
+        MenuPanelLayout.setHorizontalGroup(
+            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        MenuPanelLayout.setVerticalGroup(
+            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(266, Short.MAX_VALUE))
+        );
+
+        clearCart.setText("Clear Cart");
+        clearCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearCartActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -727,11 +815,13 @@ public class Cart extends javax.swing.JFrame {
                 .addGap(53, 53, 53)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 533, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(cashPayment)
-                    .addComponent(cardPayment)
-                    .addComponent(PayementMethod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(billButon, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(cashPayment)
+                        .addComponent(cardPayment)
+                        .addComponent(PayementMethod, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(billButon, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(clearCart, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(84, Short.MAX_VALUE))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -739,7 +829,6 @@ public class Cart extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(AppNamePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
@@ -752,25 +841,15 @@ public class Cart extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cardPayment)
                                 .addGap(22, 22, 22)
-                                .addComponent(billButon)))
+                                .addComponent(billButon)
+                                .addGap(18, 18, 18)
+                                .addComponent(clearCart)))
                         .addGap(49, 49, 49))
-                    .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(MenuPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-        Home h = new Home();
-        h.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_HomeButtonMouseClicked
-
-    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
-        ProductInfoRetrieval pir = new ProductInfoRetrieval();
-        pir.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_InventoryButtonMouseClicked
     private boolean isPaymentMethodSelected() {
         Enumeration<AbstractButton> elements = paymentButtonGroup.getElements();
         while (elements.hasMoreElements()) {
@@ -801,8 +880,8 @@ public class Cart extends javax.swing.JFrame {
                 reader = new BufferedReader(new FileReader("C:\\Users\\hp\\Desktop\\cart.txt"));
                 String bcode;
                 //reader.readLine();
-                int orderQuantity=0;
-                
+                int orderQuantity = 0;
+
                 for (int i = 0; i < rowCount; i++) {
                     String productName = model.getValueAt(i, 0).toString();
                     int quantity = Integer.parseInt(model.getValueAt(i, 1).toString());
@@ -811,7 +890,7 @@ public class Cart extends javax.swing.JFrame {
                     bcode = reader.readLine();
                     int actualQuantity = getActualQuantity(bcode);
                     int q = actualQuantity - quantity;
-                    orderQuantity+=quantity;
+                    orderQuantity += quantity;
                     System.out.println("q: " + q + " actualQuantity: " + actualQuantity + " quantity: " + quantity);
                     updateQuantityInDB(q, bcode);
                     totalAmount += itemTotal;
@@ -819,16 +898,15 @@ public class Cart extends javax.swing.JFrame {
                             .append("\t\t Rs.").append(itemTotal).append("\n");
                 }
                 double gst;
-                if(cashPayment.isSelected()){
-                gst = 0.17 * totalAmount;
-                totalAmount+=gst;
-                billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
-                }
-                else if(cardPayment.isSelected()){
+                if (cashPayment.isSelected()) {
+                    gst = 0.17 * totalAmount;
+                    totalAmount += gst;
+                    billContent.append(d).append("\n\t\t\t\tGST: Rs.").append(String.format("%.2f", gst));
+                } else if (cardPayment.isSelected()) {
                 }
                 billContent.append("\n\t\t\t\tTotal Amount: Rs.").append(totalAmount).append("\n").append(payment);
                 showBillDialog(billContent.toString());
-                addOrderToTable(totalAmount,formattedDateTime,orderQuantity);
+                addOrderToTable(totalAmount, formattedDateTime, orderQuantity);
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
@@ -845,10 +923,10 @@ public class Cart extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_billButonActionPerformed
-    private void addOrderToTable(double totalAmount,String DateTime,int quantity){
-        Home home=new Home();
-        
-        try(Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
+    private void addOrderToTable(double totalAmount, String DateTime, int quantity) {
+        Home home = new Home();
+
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
             String query = "INSERT INTO orders (seller, amount,products,datetime ) VALUES (?, ?, ?, ?)";
             try (PreparedStatement pstmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 pstmt.setString(1, home.name.getText());
@@ -861,6 +939,7 @@ public class Cart extends javax.swing.JFrame {
             System.err.println("Error adding row to the database: " + e.getMessage());
         }
     }
+
     private int getActualQuantity(String barcode) {
         String name;
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/quickcartdb", "root", "root123")) {
@@ -892,6 +971,57 @@ public class Cart extends javax.swing.JFrame {
         //setTotalBill();
         payment obj = new payment(amount);
     }//GEN-LAST:event_cardPaymentActionPerformed
+
+    private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
+        Home h = new Home();
+        h.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_HomeButtonMouseClicked
+
+    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
+        ProductInfoRetrieval pir = new ProductInfoRetrieval();
+        pir.setVisible(true);
+        setVisible(false);
+    }//GEN-LAST:event_InventoryButtonMouseClicked
+
+    private void salesHistoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salesHistoryButtonMouseClicked
+        // TODO add your handling code here:
+        SalesHistory sh = new SalesHistory();
+        sh.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_salesHistoryButtonMouseClicked
+
+    private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
+        orders o = new orders();
+        o.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_OrdersButtonMouseClicked
+
+    private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
+
+    }//GEN-LAST:event_CartButtonMouseClicked
+
+    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogoutButtonMouseClicked
+        SignIn signInPage = new SignIn();
+        signInPage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_LogoutButtonMouseClicked
+
+    private void MenuPanelAppNamePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuPanelAppNamePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuPanelAppNamePanelMouseClicked
+
+    private void clearCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearCartActionPerformed
+        deleteSheetData();
+        try {
+            clearCartFile();
+        } catch (IOException ex) {
+            Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
+        model.setRowCount(0);
+        endRow = 0;
+    }//GEN-LAST:event_clearCartActionPerformed
     private void setTotalBill() {
         int rowCount = cartTable.getRowCount();
         System.out.println("Row:" + rowCount);
@@ -919,8 +1049,6 @@ public class Cart extends javax.swing.JFrame {
     }
 
     private void printToPDF(String textToPrint) {
-        textToPrint = textToPrint.replaceAll("\t\t", " ".repeat(48));
-        textToPrint = textToPrint.replaceAll("\t\t\t\t", " ".repeat(304));
         try {
             Document document = new Document();
             PdfWriter.getInstance(document, new FileOutputStream("bill.pdf"));
@@ -931,6 +1059,7 @@ public class Cart extends javax.swing.JFrame {
             deleteSheetData();
             DefaultTableModel model = (DefaultTableModel) cartTable.getModel();
             model.setRowCount(0);
+            endRow = 0;
             System.out.println("PDF printed successfully.");
             JOptionPane.showMessageDialog(this, "PDF printed successfully.", "Printed", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException | DocumentException ex) {
@@ -939,7 +1068,7 @@ public class Cart extends javax.swing.JFrame {
     }
 
     public static void clearCartFile() throws IOException {
-        
+
         File file = new File("C:\\Users\\hp\\Desktop\\cart.txt");
         if (!file.exists()) {
             throw new IOException("File does not exist");
@@ -948,7 +1077,7 @@ public class Cart extends javax.swing.JFrame {
             fileWriter.write("");
             System.out.println("clear file");
         }
-        
+
     }
 
     public void deleteSheetData() {
@@ -1065,6 +1194,7 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JLabel CartButton;
     private javax.swing.JLabel HomeButton;
     private javax.swing.JLabel InventoryButton;
+    private javax.swing.JLabel LogoutButton;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel PayementMethod;
@@ -1073,6 +1203,7 @@ public class Cart extends javax.swing.JFrame {
     private javax.swing.JRadioButton cardPayment;
     private javax.swing.JTable cartTable;
     private javax.swing.JRadioButton cashPayment;
+    private javax.swing.JButton clearCart;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.ButtonGroup paymentButtonGroup;
     private javax.swing.JLabel salesHistoryButton;
