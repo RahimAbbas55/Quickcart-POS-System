@@ -6,17 +6,33 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 public class SignUp extends javax.swing.JFrame {
+
     static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     static final String DB_URL = "jdbc:mysql://localhost:3306/quickcartdb";
     static final String USER = "root";
     static final String PASS = "root123";
+
     public SignUp() {
         initComponents();
         Container con = getContentPane();
         con.setBackground(Color.white);
+        setApplicationIcon();
     }
+
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -273,29 +289,31 @@ public class SignUp extends javax.swing.JFrame {
         String number = tfPhone.getText();
         String cnic = tfCNIC.getText();
         String address = tfAddress.getText();
-            if (!password.equals(confirmPassword)) {
-                return;
-            }
-            try {
-                Class.forName(JDBC_DRIVER);
-                try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
-                    String sql = "INSERT INTO users (username, password, email, number, cnic, address) VALUES (?, ?, ?, ?, ?, ?)";
-                    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                        pstmt.setString(1, username);
-                        pstmt.setString(2, password);
-                        pstmt.setString(3, email);
-                        pstmt.setString(4, number);
-                        pstmt.setString(5, cnic);
-                        pstmt.setString(6, address);
-                        pstmt.executeUpdate();
-                        SignIn si = new SignIn();
-                        si.setVisible(true);
-                        setVisible(false);
-                    }
+        if (!password.equals(confirmPassword)) {
+            JOptionPane.showMessageDialog(null, "Please enter same password", "Password", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            Class.forName(JDBC_DRIVER);
+            try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
+                String sql = "INSERT INTO users (username, password, email, number, cnic, address) VALUES (?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setString(1, username);
+                    pstmt.setString(2, password);
+                    pstmt.setString(3, email);
+                    pstmt.setString(4, number);
+                    pstmt.setString(5, cnic);
+                    pstmt.setString(6, address);
+                    pstmt.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Account created succesfully", "Sign Up", JOptionPane.INFORMATION_MESSAGE);
+                    SignIn si = new SignIn();
+                    si.setVisible(true);
+                    setVisible(false);
                 }
-            } catch (ClassNotFoundException | SQLException ex) {
-                ex.printStackTrace();
             }
+        } catch (ClassNotFoundException | SQLException ex) {
+            ex.printStackTrace();
+        }
     }//GEN-LAST:event_signUpButtonActionPerformed
 
     private void tfAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAddressActionPerformed

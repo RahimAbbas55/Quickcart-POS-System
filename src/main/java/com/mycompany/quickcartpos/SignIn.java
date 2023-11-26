@@ -2,8 +2,6 @@ package com.mycompany.quickcartpos;
 
 import java.awt.Color;
 import java.awt.Container;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -13,7 +11,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
-import javax.swing.Timer;
 
 public class SignIn extends javax.swing.JFrame {
 
@@ -196,7 +193,7 @@ public class SignIn extends javax.swing.JFrame {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
                         Home.setLoggedInUsername(enteredUsername);
-                        this.dispose();
+                        //this.dispose();
                         Home hm = new Home();
                         hm.setVisible(true);
                         setVisible(false);
@@ -235,9 +232,6 @@ public class SignIn extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
 
         java.awt.EventQueue.invokeLater(() -> {

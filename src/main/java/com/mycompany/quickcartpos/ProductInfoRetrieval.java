@@ -60,13 +60,35 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
 
     public ProductInfoRetrieval() {
         initComponents();
-        Container con = getContentPane();
         getContentPane().setBackground(Color.white);
+        setApplicationIcon();
+        ImageIcon imageIcon = new ImageIcon("C:\\Users\\hp\\Desktop\\search.png");
+        int buttonWidth = 15;
+        int buttonHeight = 13;
+        Image resizedImage = imageIcon.getImage().getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+        searchBarcode.setIcon(resizedIcon);
+        ImageIcon imageIcon2 = new ImageIcon("C:\\Users\\hp\\Desktop\\refresh.png");
+        int buttonWidth2 = 20;
+        int buttonHeight2 = 20;
+        Image resizedImage2 = imageIcon2.getImage().getScaledInstance(buttonWidth2, buttonHeight2, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon2 = new ImageIcon(resizedImage2);
+        refreshButton.setIcon(resizedIcon2);
+        searchProductName.setIcon(resizedIcon);
         connectToDatabase();
         tableModel = (DefaultTableModel) productsTable.getModel();
         deleteSheetData();
         showProductsTable();
         fetchSheetData();
+    }
+    private void setApplicationIcon() {
+        try {
+            String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
+            ImageIcon icon = new ImageIcon(iconPath);
+            setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void connectToDatabase() {
@@ -197,12 +219,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
 
         AppNamePanel = new javax.swing.JPanel();
         QuickCartLabel = new javax.swing.JLabel();
-        MenuPanel = new javax.swing.JPanel();
-        HomeButton = new javax.swing.JLabel();
-        InventoryButton = new javax.swing.JLabel();
-        salesHistoryButton = new javax.swing.JLabel();
-        OrdersButton = new javax.swing.JLabel();
-        CartButton = new javax.swing.JLabel();
         editButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         addButton = new javax.swing.JButton();
@@ -222,8 +238,15 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         priceLabel = new javax.swing.JLabel();
         searchBarcode = new javax.swing.JButton();
-        seachProductName = new javax.swing.JButton();
+        searchProductName = new javax.swing.JButton();
         refreshButton = new javax.swing.JButton();
+        MenuPanel = new javax.swing.JPanel();
+        HomeButton = new javax.swing.JLabel();
+        InventoryButton = new javax.swing.JLabel();
+        salesHistoryButton = new javax.swing.JLabel();
+        OrdersButton = new javax.swing.JLabel();
+        CartButton = new javax.swing.JLabel();
+        LogoutButton = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -248,70 +271,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addContainerGap(54, Short.MAX_VALUE)
                 .addComponent(QuickCartLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(40, 40, 40))
-        );
-
-        MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
-
-        HomeButton.setBackground(new java.awt.Color(255, 255, 255));
-        HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        HomeButton.setText("Home");
-        HomeButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        HomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                HomeButtonMouseClicked(evt);
-            }
-        });
-
-        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        InventoryButton.setText("Inventory");
-        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                InventoryButtonMouseClicked(evt);
-            }
-        });
-
-        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        salesHistoryButton.setText("Sales History");
-        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        OrdersButton.setText("Orders");
-        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-
-        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        CartButton.setText("Cart");
-        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
-        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CartButtonMouseClicked(evt);
-            }
-        });
-
-        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
-        MenuPanel.setLayout(MenuPanelLayout);
-        MenuPanelLayout.setHorizontalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        MenuPanelLayout.setVerticalGroup(
-            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(MenuPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         editButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
@@ -412,16 +371,16 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
-                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
-                .addComponent(quantityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(quantityLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addGap(18, 18, 18)
                 .addComponent(priceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addGap(19, 19, 19))
         );
         SearchPanelLayout.setVerticalGroup(
             SearchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,38 +398,121 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
-        searchBarcode.setText("->");
-        searchBarcode.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        searchBarcode.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        searchBarcode.setIconTextGap(0);
-        searchBarcode.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        searchBarcode.setMargin(new java.awt.Insets(0, 0, 0, 0));
         searchBarcode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 searchBarcodeActionPerformed(evt);
             }
         });
 
-        seachProductName.setText("->");
-        seachProductName.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        seachProductName.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        seachProductName.setIconTextGap(0);
-        seachProductName.setMargin(new java.awt.Insets(2, 5, 3, 5));
-        seachProductName.addActionListener(new java.awt.event.ActionListener() {
+        searchProductName.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        searchProductName.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                seachProductNameActionPerformed(evt);
+                searchProductNameActionPerformed(evt);
             }
         });
 
-        refreshButton.setText("O");
         refreshButton.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         refreshButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
         refreshButton.setIconTextGap(0);
-        refreshButton.setMargin(new java.awt.Insets(2, 5, 3, 5));
+        refreshButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        refreshButton.setMaximumSize(new java.awt.Dimension(72, 27));
         refreshButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 refreshButtonActionPerformed(evt);
             }
         });
+
+        MenuPanel.setBackground(new java.awt.Color(213, 190, 216));
+        MenuPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MenuPanelAppNamePanelMouseClicked(evt);
+            }
+        });
+
+        HomeButton.setBackground(new java.awt.Color(255, 255, 255));
+        HomeButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        HomeButton.setText("Home");
+        HomeButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        HomeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                HomeButtonMouseClicked(evt);
+            }
+        });
+
+        InventoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        InventoryButton.setText("Inventory");
+        InventoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        InventoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                InventoryButtonMouseClicked(evt);
+            }
+        });
+
+        salesHistoryButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        salesHistoryButton.setText("Sales History");
+        salesHistoryButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        salesHistoryButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                salesHistoryButtonMouseClicked(evt);
+            }
+        });
+
+        OrdersButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        OrdersButton.setText("Orders");
+        OrdersButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        OrdersButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                OrdersButtonMouseClicked(evt);
+            }
+        });
+
+        CartButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        CartButton.setText("Cart");
+        CartButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        CartButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CartButtonMouseClicked(evt);
+            }
+        });
+
+        LogoutButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        LogoutButton.setText("Logout");
+        LogoutButton.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(100, 20, 118)));
+        LogoutButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                LogoutButtonMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout MenuPanelLayout = new javax.swing.GroupLayout(MenuPanel);
+        MenuPanel.setLayout(MenuPanelLayout);
+        MenuPanelLayout.setHorizontalGroup(
+            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(HomeButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(InventoryButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+            .addComponent(salesHistoryButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(CartButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(OrdersButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(LogoutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        MenuPanelLayout.setVerticalGroup(
+            MenuPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MenuPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(HomeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(InventoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(salesHistoryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(OrdersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(CartButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(LogoutButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(266, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -478,35 +520,34 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(MenuPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(searchBarcodeLabel)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchBarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchBarcode)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 75, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                         .addComponent(searchProductNameLabel)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, 215, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(seachProductName)
-                        .addGap(38, 38, 38))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(searchProductName)
+                        .addGap(54, 54, 54))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(SearchPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(refreshButton)
+                                .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(addButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(deleteButton)
                                 .addGap(18, 18, 18)
                                 .addComponent(editButton))
-                            .addComponent(jScrollPane1)
-                            .addComponent(SearchPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(20, 20, 20))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addComponent(AppNamePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
@@ -516,14 +557,14 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(MenuPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(searchBarcodeLabel)
                             .addComponent(searchBarcodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(searchProductNameLabel)
                             .addComponent(searchProductNameField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(searchBarcode)
-                            .addComponent(seachProductName))
+                            .addComponent(searchProductName))
                         .addGap(10, 10, 10)
                         .addComponent(SearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -531,7 +572,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                             .addComponent(addButton)
                             .addComponent(deleteButton)
                             .addComponent(editButton)
-                            .addComponent(refreshButton))
+                            .addComponent(refreshButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())))
@@ -539,16 +580,6 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
-        Home h = new Home();
-        h.setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_HomeButtonMouseClicked
-
-    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
-
-    }//GEN-LAST:event_InventoryButtonMouseClicked
 
     private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
         if (productsTable.getSelectedRow() >= 0) {
@@ -744,7 +775,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         searchProductNameField.setText("");
     }//GEN-LAST:event_refreshButtonActionPerformed
 
-    private void seachProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_seachProductNameActionPerformed
+    private void searchProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchProductNameActionPerformed
         tableModel.setRowCount(0);
         String query = "SELECT * FROM inventory WHERE name LIKE ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -763,11 +794,32 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
         } catch (SQLException ex) {
             Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_seachProductNameActionPerformed
+    }//GEN-LAST:event_searchProductNameActionPerformed
+
+    private void HomeButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_HomeButtonMouseClicked
+        Home h = new Home();
+        h.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_HomeButtonMouseClicked
+
+    private void InventoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InventoryButtonMouseClicked
+
+    }//GEN-LAST:event_InventoryButtonMouseClicked
+
+    private void salesHistoryButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_salesHistoryButtonMouseClicked
+        SalesHistory sh = new SalesHistory();
+        sh.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_salesHistoryButtonMouseClicked
+
+    private void OrdersButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_OrdersButtonMouseClicked
+        orders o = new orders();
+        o.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_OrdersButtonMouseClicked
 
     private void CartButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CartButtonMouseClicked
         try {
-            this.setVisible(false);
             Cart c = new Cart();
             /*Socket socket = new Socket();
             try {
@@ -776,19 +828,29 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
                 Logger.getLogger(Cart.class.getName()).log(Level.SEVERE, null, ex);
             }*/
             c.setVisible(true);
-            Timer timer;
-            //sleep(10000);
+            this.setVisible(false);
+            Timer timer; // 5000 milliseconds (5 seconds)
             timer = new Timer(3000, e -> {
                 c.updateTable();
             });
             timer.start();
-            this.dispose();
+            //this.dispose();
         } catch (InterruptedException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(ProductInfoRetrieval.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_CartButtonMouseClicked
+
+    private void LogoutButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_LogoutButtonMouseClicked
+        SignIn signInPage = new SignIn();
+        signInPage.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_LogoutButtonMouseClicked
+
+    private void MenuPanelAppNamePanelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MenuPanelAppNamePanelMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_MenuPanelAppNamePanelMouseClicked
     private void updateQuantityInDatabase(String id, int quantity) {
         try {
             String query = "UPDATE Inventory SET quantity = ? WHERE id = ?";
@@ -853,6 +915,7 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel CartButton;
     private javax.swing.JLabel HomeButton;
     private javax.swing.JLabel InventoryButton;
+    private javax.swing.JLabel LogoutButton;
     private javax.swing.JPanel MenuPanel;
     private javax.swing.JLabel OrdersButton;
     private javax.swing.JLabel QuickCartLabel;
@@ -872,10 +935,10 @@ public final class ProductInfoRetrieval extends javax.swing.JFrame {
     private javax.swing.JLabel quantityLabel;
     private javax.swing.JButton refreshButton;
     private javax.swing.JLabel salesHistoryButton;
-    private javax.swing.JButton seachProductName;
     private javax.swing.JButton searchBarcode;
     private javax.swing.JTextField searchBarcodeField;
     private javax.swing.JLabel searchBarcodeLabel;
+    private javax.swing.JButton searchProductName;
     private javax.swing.JTextField searchProductNameField;
     private javax.swing.JLabel searchProductNameLabel;
     // End of variables declaration//GEN-END:variables
