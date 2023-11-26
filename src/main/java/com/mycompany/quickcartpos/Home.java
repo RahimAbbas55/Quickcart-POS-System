@@ -3,9 +3,9 @@ package com.mycompany.quickcartpos;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Image;
 import java.io.IOException;
-import java.net.Socket;
-import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -14,6 +14,10 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 public class Home extends javax.swing.JFrame {
@@ -22,11 +26,17 @@ public class Home extends javax.swing.JFrame {
 
     public Home() {
         initComponents();
-        Container con = getContentPane();
         getContentPane().setBackground(Color.white);
+        ImageIcon imageIcon = new ImageIcon("C:\\Users\\hp\\Desktop\\edit.png");
+        int buttonWidth = 20;
+        int buttonHeight = 20;
+        Image resizedImage = imageIcon.getImage().getScaledInstance(buttonWidth, buttonHeight, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+        editButton.setIcon(resizedIcon);
         fetchAndDisplayAdminInfo(loggedInUsername);
         setApplicationIcon();
     }
+
     private void setApplicationIcon() {
         try {
             String iconPath = "C:\\Users\\hp\\Desktop\\icon.png";
@@ -70,6 +80,7 @@ public class Home extends javax.swing.JFrame {
         phoneNo = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         address = new javax.swing.JTextArea();
+        editButton = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -233,12 +244,12 @@ public class Home extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel7)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(282, 282, 282))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
+                .addContainerGap()
                 .addComponent(jLabel7)
                 .addContainerGap())
         );
@@ -252,10 +263,20 @@ public class Home extends javax.swing.JFrame {
         phoneNo.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         phoneNo.setText("phoneNo");
 
+        address.setEditable(false);
         address.setColumns(20);
         address.setFont(new java.awt.Font("Segoe UI Historic", 0, 12)); // NOI18N
         address.setRows(5);
         jScrollPane1.setViewportView(address);
+
+        editButton.setFont(new java.awt.Font("Segoe UI Historic", 0, 14)); // NOI18N
+        editButton.setFocusCycleRoot(true);
+        editButton.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -284,15 +305,21 @@ public class Home extends javax.swing.JFrame {
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(editButton)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, 0)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editButton)
+                .addGap(8, 8, 8)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(name))
@@ -312,7 +339,7 @@ public class Home extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(31, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -397,6 +424,74 @@ public class Home extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_salesHistoryButtonMouseClicked
 
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        JTextField nameField = new JTextField();
+        JTextField emailField = new JTextField();
+        JTextField phoneField = new JTextField();
+        JTextField addressField = new JTextField();
+
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new GridLayout(4, 2));
+        inputPanel.add(new JLabel("Name: "));
+        inputPanel.add(nameField);
+        inputPanel.add(new JLabel("Email: "));
+        inputPanel.add(emailField);
+        inputPanel.add(new JLabel("Phone No.: "));
+        inputPanel.add(phoneField);
+        inputPanel.add(new JLabel("Address: "));
+        inputPanel.add(addressField);
+
+        int result = JOptionPane.showConfirmDialog(null, inputPanel, "Edit admin Information", JOptionPane.OK_CANCEL_OPTION);
+        String newName;
+        String newEmail;
+        String newPhone;
+        String newAddress;
+        if (result == JOptionPane.OK_OPTION) {
+            if (nameField.getText().equals("")) {
+                newName = name.getText();
+            } else {
+                newName = nameField.getText();
+            }
+            if (emailField.getText().equals("")) {
+                newEmail = email.getText();
+            } else {
+                newEmail = emailField.getText();
+            }
+            if (phoneField.getText().equals("")) {
+                newPhone = phoneNo.getText();
+            } else {
+                newPhone = phoneField.getText();
+            }
+            if (addressField.getText().equals("")) {
+                newAddress = address.getText();
+            } else {
+                newAddress = addressField.getText();
+            }
+            updateAdminInDatabase(cnic.getText(), newName, newEmail, newPhone, newAddress);
+            JOptionPane.showMessageDialog(null, "Profile Updated Successfully!");
+        }
+    }//GEN-LAST:event_editButtonActionPerformed
+    
+    private void updateAdminInDatabase(String cn, String nm, String em, String ph, String add) {
+        String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
+        String usernameDB = "root";
+        String passwordDB = "root123";
+        try (Connection connection = DriverManager.getConnection(jdbcUrl, usernameDB, passwordDB)) {
+            String query = "UPDATE users SET Username = ? , email = ? , number = ? , address = ? WHERE cnic = ?";
+            try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+                pstmt.setString(1, nm);
+                pstmt.setString(2, em);
+                pstmt.setString(3, ph);
+                pstmt.setString(4, add);
+                pstmt.setString(5, cn);
+                pstmt.executeUpdate();
+                fetchAndDisplayAdminInfo(nm);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating profile in the database: " + e.getMessage());
+        }
+    }
+
     private void fetchAndDisplayAdminInfo(String loggedInUsername) {
         String jdbcUrl = "jdbc:mysql://localhost:3306/quickcartdb";
         String usernameDB = "root";
@@ -441,16 +536,24 @@ public class Home extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Home.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Home.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Home.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Home.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Home.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -471,6 +574,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JLabel QuickCartLabel;
     private javax.swing.JTextArea address;
     private javax.swing.JLabel cnic;
+    private javax.swing.JButton editButton;
     private javax.swing.JLabel email;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
