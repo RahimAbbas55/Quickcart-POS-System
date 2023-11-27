@@ -1,4 +1,3 @@
-# SCD-Term-Project
 # Quick Cart POS System
 
 Welcome to the Quick Cart POS System, a Java Swing project with Maven.
