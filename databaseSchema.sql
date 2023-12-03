@@ -8,7 +8,20 @@ number varchar(11) UNIQUE,
 cnic varchar(13) UNIQUE,
 address text IS NULL
 ); 
-tahoor, usmara, maham, rahim, ali, ahmad, umer, amna, fatima and ayesha
+
+INSERT INTO users (Username, password, email, number, cnic, address)
+VALUES 
+('tahoor', '123456', 'tahoor@gmail.com', '03214471895', '123456789', 'Lahore'),
+('usmara', '456789', 'usmara@gmail.com', '03008642418', '456789123', 'Lahore'),
+('maham', '789123', 'maham@gmail.com', '12345678910', '987654321', 'Lahore'),
+('rahim', '345678', 'rahim@gmail.com', '78910234567', '567891234', 'Karachi'),
+('ahmad', '723723', 'ahmad@gmail.com', '78129034650', '1290347856', 'Quetta'),
+('ali', '823823', 'ali@gmail.com', '63728536', '7839273883', 'Karachi'),
+('amna', '909909', 'amna@gmail.com', '728930265', '74829512', 'Multan'),
+('ayesha', '321321', 'ayesha@gmail.com', '8261936283', '28316383', 'Islamabad'),
+('fatima', '845845', 'fatima@gmail.com', '7373927103', '2345678901', 'Karachi'),
+('umer', '901901', 'umer@gmail.com', '03214567891', '6789012345', 'Islamabad');
+
 
 CREATE TABLE Inventory (
     id INT PRIMARY KEY AUTO_INCREMENT,
